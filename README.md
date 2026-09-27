@@ -4,7 +4,7 @@ A third-year university project exploring evidence-based answers to general heal
 
 WellQuery builds on Manavpreet Singh's existing MediBot project, adding hybrid retrieval, citations, an evidence panel, and comparative evaluation.
 
-The project is hosted in the `carecompass` repository. Its revised scope is not limited to Canadian public-health sources.
+The project is hosted in the [WellQuery repository](https://github.com/manavpreet1809/WellQuery). Its scope is not limited to Canadian public-health sources.
 
 ## Planned features
 
