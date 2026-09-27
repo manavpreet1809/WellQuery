@@ -1,6 +1,8 @@
-# MediBot
+# WellQuery
 
 A third-year university project exploring evidence-based answers to general health-information questions using document retrieval, question routing, and an LLM.
+
+WellQuery builds on Manavpreet Singh's existing MediBot project, adding hybrid retrieval, citations, an evidence panel, and comparative evaluation.
 
 The project is hosted in the `carecompass` repository. Its revised scope is not limited to Canadian public-health sources.
 

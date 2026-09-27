@@ -1,8 +1,8 @@
-# MediBot project scope
+# WellQuery project scope
 
 ## Goal
 
-Build a third-year university project that answers general health-information questions using a small document collection and shows the evidence behind each answer. The existing GitHub repository is named `carecompass`; the working project name is MediBot.
+Build a third-year university project that answers general health-information questions using a small document collection and shows the evidence behind each answer. The project is named WellQuery and builds on Manavpreet Singh's existing MediBot code. The existing GitHub repository is named `carecompass`.
 
 The project has no required Canadian or Alberta source focus. Sources will be selected for relevance, quality, and permission to reuse before ingestion.
 
@@ -49,4 +49,4 @@ Use fictional inputs for the demo and evaluation. A local demonstration is suffi
 
 ## Current status
 
-Planning only. No MediBot code or health documents have been imported. Source selection, reuse authorization, implementation, and evaluation remain to be completed.
+Planning only. Manavpreet Singh has confirmed that MediBot is his own project and authorized using it as the foundation. No MediBot code or health documents have been imported. Source selection, implementation, and evaluation remain to be completed.
