@@ -4,7 +4,7 @@ The proposed starting point is a local folder supplied by the project owner name
 
 Manavpreet Singh has confirmed that MediBot is his own project and authorized reusing its code as the foundation for WellQuery. MediBot is the original project; WellQuery is the planned extension. An upstream repository URL has not been supplied, and no license file was found in the local folder during the initial review.
 
-No source code, model artifacts, datasets, or document content from that folder has been copied into this repository in this commit.
+The application, LLM wrapper, HTML/CSS interface, and original requirements have now been imported from that folder. The initial import is recorded in `docs/medibot-baseline.json`; subsequent changes are WellQuery development. No model artifacts, datasets, or health-document content have been imported from MediBot. External asset URLs in the original UI are part of the baseline and will be removed as the interface is adapted.
 
 When importing code:
 
