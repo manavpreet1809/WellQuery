@@ -1,7 +1,7 @@
 """WellQuery HTTP API; demo mode works without accounts or model downloads."""
 from pathlib import Path
 from typing import Literal
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -43,7 +43,7 @@ class AskResponse(BaseModel):
     refused: bool
     mode: Literal["demo", "databricks"]
 
-def create_app(mode: str | None = None, client=None, generate=None) -> FastAPI:
+def create_app(mode: str | None = None, client=None, generate=None, search_database=None, search_embed=None) -> FastAPI:
     """Construct the app with injectable dependencies for offline tests."""
     backend = mode or settings.BACKEND_MODE
     if backend not in {"demo", "databricks"}:
@@ -60,6 +60,21 @@ def create_app(mode: str | None = None, client=None, generate=None) -> FastAPI:
     @application.get("/health")
     def health():
         return {"status": "ok", "mode": backend, "remote_inference_verified": False}
+
+    @application.get("/search")
+    def search_endpoint(q: str = Query(min_length=1, max_length=1000),
+                        mode: Literal["keyword", "vector", "hybrid"] = "hybrid",
+                        k: int = Query(default=5, ge=1, le=20), routing: bool = False):
+        """Return source passages, not generated medical answers."""
+        from app.search import DATABASE, search_report
+        import sqlite3
+        try:
+            return search_report(q, mode, k, database=search_database or DATABASE,
+                                 embed=search_embed, routing=routing)
+        except ValueError:
+            raise HTTPException(422, "Invalid search input or vector data.") from None
+        except (RuntimeError, ImportError, OSError, sqlite3.Error):
+            raise HTTPException(503, "Search unavailable. Ingest documents and build the vector index for vector/hybrid mode.") from None
 
     @application.post("/ask", response_model=AskResponse)
     def ask(req: AskRequest):

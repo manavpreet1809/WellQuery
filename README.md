@@ -66,3 +66,15 @@ uv pip install --python .venv/bin/python -r requirements-search.txt
 ```
 
 Model files stay in ignored `data/models/`. Searches load the model locally and do not download it automatically. Rebuild the index after ingestion changes. Scores are relevance signals, not probabilities of truth or medical confidence. This is passage retrieval; `/ask` remains the scripted demo unless configured for the original remote backend.
+
+## Hybrid search and routing
+
+```sh
+.venv/bin/python -m app.search "diabetes symptoms" --mode hybrid --routing
+```
+
+With the server running, use `/docs` to try `GET /search?q=diabetes%20symptoms&mode=hybrid&routing=true`. Modes are `keyword`, `vector`, and `hybrid`; omit routing to compare against unrestricted retrieval. Each result includes source metadata, the full passage, its score, and component ranks. Hybrid retrieval combines up to 50 candidates from each method with reciprocal rank fusion (constant 60).
+
+Local routing is a transparent **rule-based baseline**, not the original trained Databricks classifier. It routes unambiguous medication/condition cues, leaves mixed or unknown questions unrestricted, and reports missing category coverage explicitly. The present condition-only corpus has no medication documents. Routing does not establish whether a question is safe or in scope, and vector results are not evidence that a question is answerable. Generated answers and citation validation are still a later stage.
+
+Semantic retrieval uses the model's default sequence-length limit; unusually long passages may be truncated during embedding. Keyword search uses the full passage. This limitation should be evaluated before expanding the corpus. Dense retrieval scans the small index exactly; it is not intended for a production-scale collection.

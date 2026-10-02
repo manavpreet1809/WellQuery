@@ -21,4 +21,4 @@ SQLite is a lightweight interim document store, not a vector index. Chunks use 1
 
 Re-ingestion replaces changed documents and skips unchanged ones. All documents are prepared before database writes, and changes are committed in one transaction. Removing a catalogue entry does not automatically delete its existing database rows. Use a fresh database when intentionally reducing the corpus.
 
-This store is not yet connected to `/ask`. Local retrieval and embeddings are the next stage. The default chat mode remains an explicitly scripted demo.
+This store is connected to `/search` for keyword, vector, and hybrid retrieval, but not yet to local generated answers in `/ask`. The default chat mode remains an explicitly scripted demo.

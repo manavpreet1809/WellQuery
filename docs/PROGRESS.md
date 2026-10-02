@@ -34,3 +34,9 @@ Validation: all 24 offline tests pass. Live ingestion produced 38 chunks across 
 Added BM25 keyword search and optional MiniLM semantic embeddings with exact cosine ranking. A pinned model revision, persisted vector snapshot, metadata fingerprints, and stale-index checks make changed source content explicit. Search returns full passages and attribution through a CLI. Tests use deterministic vectors; they do not claim semantic quality. Keyword search remains independent of model dependencies. Full held-out retrieval evaluation remains Day 9.
 
 Day 5 verification: 33 offline tests passed. The actual pinned MiniLM model downloaded successfully and indexed all 38 existing chunks. Live keyword and local vector smoke queries returned source passages; this confirms operation, not accuracy on a verified evaluation set.
+
+## Day 6 — hybrid retrieval and local routing baseline
+
+Added reciprocal rank fusion, optional category routing, and a validated `/search` endpoint with metadata, component ranks, latency, and explicit empty-result reasons. The original Databricks classifier is still available in its remote flow. Because trained local artifacts are not supplied, the local comparator uses documented cue-based rules instead of claiming to reproduce that model. Medication search with routing reports missing coverage in the current condition-only corpus.
+
+Verification: 43 offline tests pass, covering hand-computed fusion scores, mixed/unknown routing, category filtering, API validation, missing stores, vector freshness, and previous ingestion/API behavior. Real keyword, vector, and hybrid endpoint smoke tests run against 38 indexed chunks. These checks establish operation, not a measured quality improvement. The scripted `/ask` behavior remains unchanged. Day 7 (grounded generation, citations, and safeguards) is next.

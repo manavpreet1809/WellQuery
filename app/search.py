@@ -127,23 +127,44 @@ def vector_rank(query: str, rows: list[dict], database: Path, embed=None):
     return sorted(results, key=lambda item: (-item[1], item[0]))
 
 
-def search(query: str, mode: str = 'keyword', k: int = 5, database: Path = DATABASE, embed=None) -> list[dict]:
-    """Retrieve passages with attribution. Scores are ranks, not medical confidence."""
+def search_report(query: str, mode: str = 'hybrid', k: int = 5, database: Path = DATABASE,
+                  embed=None, routing: bool = False) -> dict:
+    """Compare retrieval modes with optional, explicitly labeled rule-based routing."""
+    from time import perf_counter
+    from app.routing import reciprocal_rank_fusion, route_question
+    started = perf_counter()
     if not query.strip() or len(query) > 1000 or not 1 <= k <= 20:
         raise ValueError('Require a question of 1–1000 characters and k of 1–20')
-    if mode not in {'keyword', 'vector'}:
+    if mode not in {'keyword', 'vector', 'hybrid'}:
         raise ValueError('Unknown search mode')
     rows = read_chunks(database)
-    ranking = keyword_rank(query, rows) if mode == 'keyword' else vector_rank(query, rows, database, embed)
+    route = route_question(query) if routing else dict(category='all', method='disabled', matched_terms=[])
+    eligible = {r['chunk_id'] for r in rows if route['category'] == 'all' or r['category'] in {route['category'], 'all'}}
+    # Keep the full corpus for vector freshness validation; then restrict candidates.
+    keyword = keyword_rank(query, rows) if mode != 'vector' else []
+    vector = vector_rank(query, rows, database, embed) if mode != 'keyword' and eligible else []
+    keyword = [(key, score) for key, score in keyword if key in eligible][:50]
+    vector = [(key, score) for key, score in vector if key in eligible][:50]
+    ranking = reciprocal_rank_fusion([keyword, vector]) if mode == 'hybrid' else keyword if mode == 'keyword' else vector
     lookup = {r['chunk_id']: r for r in rows}
-    return [{**lookup[key], 'score': score} for key,score in ranking[:k]]
+    kr = {key: rank for rank, (key, _) in enumerate(keyword, 1)}
+    vr = {key: rank for rank, (key, _) in enumerate(vector, 1)}
+    hits = [{**lookup[key], 'score': score, 'keyword_rank': kr.get(key), 'vector_rank': vr.get(key)} for key, score in ranking[:k]]
+    return dict(mode=mode, route=route, hits=hits, latency_ms=round((perf_counter()-started)*1000, 2),
+                empty_reason=('no_documents_for_route' if rows and not eligible else 'no_matches') if not hits else None)
+
+
+def search(query: str, mode: str = 'keyword', k: int = 5, database: Path = DATABASE, embed=None) -> list[dict]:
+    """Compatibility helper returning passages only."""
+    return search_report(query, mode, k, database, embed)['hits']
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('query', nargs='?')
-    parser.add_argument('--mode', choices=['keyword','vector'], default='keyword')
+    parser.add_argument('--mode', choices=['keyword','vector','hybrid'], default='keyword')
     parser.add_argument('--database', type=Path, default=DATABASE)
+    parser.add_argument('--routing', action='store_true')
     parser.add_argument('--index', action='store_true')
     parser.add_argument('--download-model', action='store_true')
     args = parser.parse_args()
@@ -151,7 +172,7 @@ def main():
         if args.index:
             print(json.dumps({'indexed_chunks': build_index(args.database, download=args.download_model)}))
         elif args.query:
-            print(json.dumps(search(args.query, args.mode, database=args.database), indent=2))
+            print(json.dumps(search_report(args.query, args.mode, database=args.database, routing=args.routing), indent=2))
         else:
             parser.error('Supply a query or --index')
     except (RuntimeError, ImportError, OSError, ValueError) as exc:
