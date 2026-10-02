@@ -36,3 +36,15 @@ Open http://127.0.0.1:8000 and ask **What is WellQuery?** The default `BACKEND_M
 For the original remote flow, set `BACKEND_MODE=databricks`, configure the endpoint variables in `.env`, and install `requirements-llm.txt`. This requires your own Databricks deployments and access to the configured Hugging Face model; the model downloads on first generation. Endpoint responses must contain full `chunk_text`, not previews. No live remote inference has been verified in this repository.
 
 Run `make check` for offline API tests and whitespace checks. Tests use injected services and never download a model or send questions to Databricks.
+
+## Document ingestion
+
+A three-article NIDDK starter catalogue and local SQLite ingestion pipeline are available. Install the updated requirements and run:
+
+```sh
+.venv/bin/python -m app.ingest --download
+```
+
+See [source permissions, cache behavior, and limitations](data/README.md). The initial run produced **38 chunks**; an unchanged rerun made zero document updates. These are ingestion checks, not retrieval or answer-quality results. The document store is not yet connected to the chat endpoint.
+
+See [commit progress](docs/PROGRESS.md) for completed work and remaining validation.

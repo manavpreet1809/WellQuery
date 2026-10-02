@@ -1,0 +1,41 @@
+[
+  {
+    "id": "niddk-what-is-diabetes",
+    "title": "What Is Diabetes?",
+    "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+    "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes",
+    "licence": "NIDDK copyright-free text with source acknowledgement; exceptions apply to third-party material and graphics. No endorsement or specific medical advice.",
+    "licence_url": "https://www.niddk.nih.gov/copyright",
+    "permission_checked_on": "2026-10-02",
+    "approved": true,
+    "category": "condition",
+    "format": "html",
+    "selector": ".health-detail-content"
+  },
+  {
+    "id": "niddk-symptoms-causes",
+    "title": "Symptoms & Causes of Diabetes",
+    "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+    "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/symptoms-causes",
+    "licence": "NIDDK copyright-free text with source acknowledgement; exceptions apply to third-party material and graphics. No endorsement or specific medical advice.",
+    "licence_url": "https://www.niddk.nih.gov/copyright",
+    "permission_checked_on": "2026-10-02",
+    "approved": true,
+    "category": "condition",
+    "format": "html",
+    "selector": ".health-detail-content"
+  },
+  {
+    "id": "niddk-risk-factors-type-2-diabetes",
+    "title": "Risk Factors for Type 2 Diabetes",
+    "publisher": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+    "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/risk-factors-type-2-diabetes",
+    "licence": "NIDDK copyright-free text with source acknowledgement; exceptions apply to third-party material and graphics. No endorsement or specific medical advice.",
+    "licence_url": "https://www.niddk.nih.gov/copyright",
+    "permission_checked_on": "2026-10-02",
+    "approved": true,
+    "category": "condition",
+    "format": "html",
+    "selector": ".health-detail-content"
+  }
+]

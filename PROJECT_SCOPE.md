@@ -49,4 +49,4 @@ Use fictional inputs for the demo and evaluation. A local demonstration is suffi
 
 ## Current status
 
-The MediBot application baseline is imported with confirmed ownership. Startup, API validation, safe error responses, and an offline scripted UI demo are implemented. Live Databricks inference has not been verified. Search improvements, safety boundaries, and evaluation remain planned.
+The MediBot application baseline is imported with confirmed ownership. Startup, API validation, safe error responses, and an offline scripted UI demo are implemented. Live Databricks inference has not been verified. A three-article starter catalogue and local SQLite ingestion pipeline are available, with 38 chunks verified on the initial run. The planned 15–20 source corpus, embeddings, search improvements, safety boundaries, and evaluation remain future work.
