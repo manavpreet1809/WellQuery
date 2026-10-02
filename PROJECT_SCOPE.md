@@ -49,4 +49,4 @@ Use fictional inputs for the demo and evaluation. A local demonstration is suffi
 
 ## Current status
 
-Planning only. Manavpreet Singh has confirmed that MediBot is his own project and authorized using it as the foundation. No MediBot code or health documents have been imported. Source selection, implementation, and evaluation remain to be completed.
+The MediBot application baseline is imported with confirmed ownership. Startup, API validation, safe error responses, and an offline scripted UI demo are implemented. Live Databricks inference has not been verified. Search improvements, safety boundaries, and evaluation remain planned.

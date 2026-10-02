@@ -3,6 +3,7 @@ from app.config import settings
 
 class DatabricksClient:
     def __init__(self):
+        settings.validate_remote()
         self.host = settings.DATABRICKS_HOST  # base host
         self.token = settings.DATABRICKS_TOKEN  # auth token
         self.classifier = settings.CLASSIFIER_ENDPOINT  # classifier endpoint name

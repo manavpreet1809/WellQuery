@@ -1,8 +1,7 @@
+# Web runtime (no model downloads needed for demo mode)
 fastapi==0.115.6
-uvicorn[standard]==0.34.0
+uvicorn==0.34.0
 pydantic==2.10.4
 requests==2.32.3
 python-dotenv==1.0.1
-transformers==4.47.1
-torch==2.7.1
-accelerate==1.2.1
+jinja2==3.1.6

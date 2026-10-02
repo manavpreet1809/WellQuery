@@ -1,5 +1,3 @@
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from llm.prompt import SYSTEM_PROMPT
 from app.config import settings
 
@@ -15,6 +13,9 @@ def load_model():
 
     if _pipe is not None:
         return
+
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, token=HF_TOKEN) # load tokenizer
     tokenizer.pad_token = tokenizer.eos_token # set pad token
@@ -75,10 +76,4 @@ def answer_with_llm(question: str, chunks) -> str:
     context = "\n\n".join(chunks) # join chunks
     prompt = build_llama_prompt(context, question) # build prompt
 
-    try:
-        return _pipe(prompt)[0]["generated_text"].strip() # generate answer
-    except Exception:
-        return (
-            "Something went wrong while generating an answer. "
-            "Please try again later or speak to a healthcare professional."
-        )
+    return _pipe(prompt)[0]["generated_text"].strip()

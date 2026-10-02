@@ -16,8 +16,23 @@ The project is hosted in the [WellQuery repository](https://github.com/manavpree
 
 ## Status
 
-Planning stage: no application is implemented in this repository yet. See [project scope and stages](PROJECT_SCOPE.md) and [provenance and reuse status](ATTRIBUTION.md).
+The original MediBot baseline is imported and an offline scripted chat demo is available. Retrieval improvements, clinical safeguards, and evaluation are still in development. See [project scope and stages](PROJECT_SCOPE.md) and [provenance and reuse status](ATTRIBUTION.md).
 
 The first release targets a local demo using a small permitted document collection and fictional evaluation inputs. Setup instructions and measured results will be added as implementation progresses.
 
 Independent student project; not affiliated with a health authority. General information only, not medical advice. Prototype safeguards are not clinically validated.
+
+## Run locally (Python 3.12)
+
+```sh
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r requirements-dev.txt
+cp .env.example .env
+make run
+```
+
+Open http://127.0.0.1:8000 and ask **What is WellQuery?** The default `BACKEND_MODE=demo` is a scripted UI demonstration, not medical retrieval or LLM generation. Other questions receive an insufficient-evidence response.
+
+For the original remote flow, set `BACKEND_MODE=databricks`, configure the endpoint variables in `.env`, and install `requirements-llm.txt`. This requires your own Databricks deployments and access to the configured Hugging Face model; the model downloads on first generation. Endpoint responses must contain full `chunk_text`, not previews. No live remote inference has been verified in this repository.
+
+Run `make check` for offline API tests and whitespace checks. Tests use injected services and never download a model or send questions to Databricks.

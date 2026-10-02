@@ -1,32 +1,33 @@
+"""Configuration loaded without requiring remote credentials at startup."""
 import os
+from dataclasses import dataclass, field
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(ROOT / ".env")
 
-def _require(name: str) -> str:
-    v = os.getenv(name)
-    if not v:
-        raise RuntimeError(f"Missing required env var: {name}")
-    return v
-
+@dataclass
 class Settings:
-    # Databricks
-    DATABRICKS_HOST = _require("DATABRICKS_HOST").rstrip("/")
-    DATABRICKS_TOKEN = _require("DATABRICKS_TOKEN")
-    CLASSIFIER_ENDPOINT = _require("CLASSIFIER_ENDPOINT")
-    RETRIEVER_ENDPOINT = _require("RETRIEVER_ENDPOINT")
+    BACKEND_MODE: str = field(default_factory=lambda: os.getenv("BACKEND_MODE", "demo"))
+    DATABRICKS_HOST: str = field(default_factory=lambda: os.getenv("DATABRICKS_HOST", "").rstrip("/"))
+    DATABRICKS_TOKEN: str = field(default_factory=lambda: os.getenv("DATABRICKS_TOKEN", ""), repr=False)
+    CLASSIFIER_ENDPOINT: str = field(default_factory=lambda: os.getenv("CLASSIFIER_ENDPOINT", ""))
+    RETRIEVER_ENDPOINT: str = field(default_factory=lambda: os.getenv("RETRIEVER_ENDPOINT", ""))
+    CLASSIFIER_THRESHOLD: float = 0.80
+    TOP_K: int = 5
+    POOL_K: int = 50
+    MAX_DIST: float = 0.85
+    MODEL_NAME: str = field(default_factory=lambda: os.getenv("MODEL_NAME", "meta-llama/Llama-3.2-1B-Instruct"))
+    HF_TOKEN: str | None = field(default_factory=lambda: os.getenv("HF_TOKEN"), repr=False)
+    MAX_NEW_TOKENS: int = field(default_factory=lambda: int(os.getenv("MAX_NEW_TOKENS", "256")))
 
-    # Routing defaults
-    CLASSIFIER_THRESHOLD = float(os.getenv("CLASSIFIER_THRESHOLD", "0.80"))
-
-    # Retrieval defaults
-    TOP_K = int(os.getenv("TOP_K", "5"))
-    POOL_K = int(os.getenv("POOL_K", "50"))
-    MAX_DIST = float(os.getenv("MAX_DIST", "0.85"))
-
-    # LLM
-    MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama-3.2-1B-Instruct")
-    HF_TOKEN = os.getenv("HF_TOKEN")
-    MAX_NEW_TOKENS = int(os.getenv("MAX_NEW_TOKENS", "256"))
+    def validate_remote(self) -> None:
+        """Require credentials only when using remote inference."""
+        missing = [name for name in ("DATABRICKS_HOST", "DATABRICKS_TOKEN", "CLASSIFIER_ENDPOINT", "RETRIEVER_ENDPOINT") if not getattr(self, name)]
+        if missing:
+            raise RuntimeError("Remote backend is not configured")
+        if not self.DATABRICKS_HOST.startswith("https://"):
+            raise RuntimeError("Databricks requires an HTTPS URL")
 
 settings = Settings()

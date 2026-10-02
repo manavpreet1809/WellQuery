@@ -1,0 +1,5 @@
+# Optional: original MediBot local generation backend; requires model access.
+-r requirements.txt
+transformers==4.47.1
+torch==2.7.1
+accelerate==1.2.1
