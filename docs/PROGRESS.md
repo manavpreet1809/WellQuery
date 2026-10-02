@@ -28,3 +28,9 @@ Validation: all 24 offline tests pass. Live ingestion produced 38 chunks across 
 8. Expandable evidence panel and interface polish.
 9. Manually checked evaluation set and comparative results.
 10. Results dashboard, final documentation, and demo.
+
+## Day 5 — keyword and vector retrieval
+
+Added BM25 keyword search and optional MiniLM semantic embeddings with exact cosine ranking. A pinned model revision, persisted vector snapshot, metadata fingerprints, and stale-index checks make changed source content explicit. Search returns full passages and attribution through a CLI. Tests use deterministic vectors; they do not claim semantic quality. Keyword search remains independent of model dependencies. Full held-out retrieval evaluation remains Day 9.
+
+Day 5 verification: 33 offline tests passed. The actual pinned MiniLM model downloaded successfully and indexed all 38 existing chunks. Live keyword and local vector smoke queries returned source passages; this confirms operation, not accuracy on a verified evaluation set.

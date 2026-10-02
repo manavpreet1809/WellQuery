@@ -48,3 +48,21 @@ A three-article NIDDK starter catalogue and local SQLite ingestion pipeline are 
 See [source permissions, cache behavior, and limitations](data/README.md). The initial run produced **38 chunks**; an unchanged rerun made zero document updates. These are ingestion checks, not retrieval or answer-quality results. The document store is not yet connected to the chat endpoint.
 
 See [commit progress](docs/PROGRESS.md) for completed work and remaining validation.
+
+## Local search
+
+Keyword search uses BM25 and works with the web requirements alone:
+
+```sh
+.venv/bin/python -m app.search "diabetes symptoms" --mode keyword
+```
+
+For semantic search, install the optional embedding dependencies and explicitly download/index the pinned MiniLM model:
+
+```sh
+uv pip install --python .venv/bin/python -r requirements-search.txt
+.venv/bin/python -m app.search --index --download-model
+.venv/bin/python -m app.search "high blood sugar" --mode vector
+```
+
+Model files stay in ignored `data/models/`. Searches load the model locally and do not download it automatically. Rebuild the index after ingestion changes. Scores are relevance signals, not probabilities of truth or medical confidence. This is passage retrieval; `/ask` remains the scripted demo unless configured for the original remote backend.

@@ -10,3 +10,5 @@ __pycache__/
 data/raw/
 data/processed/
 *.sqlite3
+
+data/models/
