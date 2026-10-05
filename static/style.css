@@ -10,3 +10,14 @@ textarea { display: block; width: 100%; padding: 12px; font: inherit; border: 1p
 button { margin-top: 12px; border: 0; border-radius: 8px; padding: 12px 20px; background: #126557; color: white; font: inherit; cursor: pointer; }
 button:disabled { opacity: 0.6; cursor: wait; }
 :focus-visible { outline: 3px solid #b35b00; outline-offset: 3px; }
+.answer { margin: 20px 0; padding: 20px; border: 1px solid #c8dad5; border-radius: 12px; }
+.answer h2 { font-size: 1.15rem; margin: 0; }
+.answer-label, .source-meta { color: #425e69; font-size: .9rem; }
+#messages .answer p { background: none; padding: 0; }
+details { margin: 12px 0; padding: 12px; background: #f2f7f5; border-radius: 8px; overflow-wrap: anywhere; }
+summary { cursor: pointer; font-weight: 600; }
+blockquote { margin: 12px 0; padding-left: 12px; border-left: 3px solid #14766b; }
+.passage { font-size: .9rem; }
+a { color: #075d79; text-underline-offset: 3px; }
+select { width: 100%; padding: 10px; margin: 8px 0; font: inherit; }
+@media (max-width: 540px) { body { padding: 10px; } main { padding: 16px; margin: 10px auto; } .answer { padding: 12px; } }

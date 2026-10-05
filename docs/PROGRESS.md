@@ -46,3 +46,9 @@ Verification: 43 offline tests pass, covering hand-computed fusion scores, mixed
 Connected local hybrid retrieval to `/ask` in opt-in `local` mode. Default answers are explicitly labeled verbatim excerpts, with structured citations and quotes. Optional Ollama synthesis requests structured claims and rejects invalid citation IDs or nonverbatim support quotes. Guards precede retrieval; no evidence and invalid output fail closed. Rules are incomplete and quote validation is not semantic entailment.
 
 Verification: 52 offline tests pass, including citation integrity, missing evidence, guard ordering, and injected model behavior. A real local excerpt smoke test uses the indexed articles. Ollama model synthesis remains unverified without a configured local model. This distinction is visible in the interface and documentation.
+
+## Day 8 — inspectable evidence interface
+
+Added clickable citation markers that open evidence cards, source titles/publishers/section names, exact support quotations, full passages, original-source links, and answer timing. Users choose source excerpts or optional Ollama synthesis, with explicit labels. All content is rendered as text; source URLs are restricted to HTTP(S). Loading, timeout, and server errors restore the form for retry.
+
+Verification: JavaScript syntax check and all 52 backend tests pass. Browser testing submitted a real question, displayed cited source excerpts, and opened the corresponding evidence card through a citation link. The full answer text remains a retrieval-quality target for evaluation; showing a citation does not certify relevance. Responsive styles are included; no formal accessibility audit is claimed.
