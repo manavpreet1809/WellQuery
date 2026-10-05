@@ -16,7 +16,7 @@ The project is hosted in the [WellQuery repository](https://github.com/manavpree
 
 ## Status
 
-The original MediBot baseline is imported and an offline scripted chat demo is available. Retrieval improvements, clinical safeguards, and evaluation are still in development. See [project scope and stages](PROJECT_SCOPE.md) and [provenance and reuse status](ATTRIBUTION.md).
+The original MediBot baseline is imported and an offline scripted chat demo is available. Local retrieval, cited excerpt answers, prototype safeguards, an evidence panel, and a draft evaluation runner are implemented. Live model synthesis and human-verified evaluation remain outstanding. See [project scope and stages](PROJECT_SCOPE.md) and [provenance and reuse status](ATTRIBUTION.md).
 
 The first release targets a local demo using a small permitted document collection and fictional evaluation inputs. Setup instructions and measured results will be added as implementation progresses.
 
@@ -45,7 +45,7 @@ A three-article NIDDK starter catalogue and local SQLite ingestion pipeline are 
 .venv/bin/python -m app.ingest --download
 ```
 
-See [source permissions, cache behavior, and limitations](data/README.md). The initial run produced **38 chunks**; an unchanged rerun made zero document updates. These are ingestion checks, not retrieval or answer-quality results. The document store is not yet connected to the chat endpoint.
+See [source permissions, cache behavior, and limitations](data/README.md). The initial run produced **38 chunks**; an unchanged rerun made zero document updates. These are ingestion checks, not retrieval or answer-quality results. The document store now supports cited answers when BACKEND_MODE=local.
 
 See [commit progress](docs/PROGRESS.md) for completed work and remaining validation.
 
@@ -65,7 +65,7 @@ uv pip install --python .venv/bin/python -r requirements-search.txt
 .venv/bin/python -m app.search "high blood sugar" --mode vector
 ```
 
-Model files stay in ignored `data/models/`. Searches load the model locally and do not download it automatically. Rebuild the index after ingestion changes. Scores are relevance signals, not probabilities of truth or medical confidence. This is passage retrieval; `/ask` remains the scripted demo unless configured for the original remote backend.
+Model files stay in ignored `data/models/`. Searches load the model locally and do not download it automatically. Rebuild the index after ingestion changes. Scores are relevance signals, not probabilities of truth or medical confidence. This is passage retrieval; `/ask` defaults to a scripted demo; set BACKEND_MODE=local for evidence-backed excerpts or explicitly selected Ollama synthesis.
 
 ## Hybrid search and routing
 
@@ -75,7 +75,7 @@ Model files stay in ignored `data/models/`. Searches load the model locally and 
 
 With the server running, use `/docs` to try `GET /search?q=diabetes%20symptoms&mode=hybrid&routing=true`. Modes are `keyword`, `vector`, and `hybrid`; omit routing to compare against unrestricted retrieval. Each result includes source metadata, the full passage, its score, and component ranks. Hybrid retrieval combines up to 50 candidates from each method with reciprocal rank fusion (constant 60).
 
-Local routing is a transparent **rule-based baseline**, not the original trained Databricks classifier. It routes unambiguous medication/condition cues, leaves mixed or unknown questions unrestricted, and reports missing category coverage explicitly. The present condition-only corpus has no medication documents. Routing does not establish whether a question is safe or in scope, and vector results are not evidence that a question is answerable. Generated answers and citation validation are still a later stage.
+Local routing is a transparent **rule-based baseline**, not the original trained Databricks classifier. It routes unambiguous medication/condition cues, leaves mixed or unknown questions unrestricted, and reports missing category coverage explicitly. The present condition-only corpus has no medication documents. Routing does not establish whether a question is safe or in scope, and vector results are not evidence that a question is answerable. Local answer citation validation is now available; it does not establish semantic entailment.
 
 Semantic retrieval uses the model's default sequence-length limit; unusually long passages may be truncated during embedding. Keyword search uses the full passage. This limitation should be evaluated before expanding the corpus. Dense retrieval scans the small index exactly; it is not intended for a production-scale collection.
 
@@ -88,3 +88,7 @@ Optional synthesis uses a locally running [Ollama chat API](https://docs.ollama.
 Phrase-based emergency/personal-advice/injection checks run before retrieval in local mode. Dosing patterns, malformed citations, and fabricated quotes block output. These incomplete rules can miss paraphrases or misread negation; they are not clinical triage, a privacy filter, or a complete prompt-injection defense. Legacy Databricks mode does not use these new local safeguards. No questions or answers are persisted by the local pipeline.
 
 In local mode, click a numbered citation to expand its source card. Cards show publisher, section, support quotes, the full passage, and an original-source link. The answer-style selector distinguishes verbatim excerpts from optional AI synthesis; errors keep your question available for retry.
+
+## Evaluate and review (Day 9)
+
+Run `.venv/bin/python -m evaluation.run --include-drafts` to compare four search configurations and export excerpt answers for review. The 60-question set is entirely **unverified**. The default command omits drafts and currently refuses to run without reviewed questions. See [evaluation definitions, results limitations, and review instructions](evaluation/README.md). No verified accuracy or clinical-safety claim is made.

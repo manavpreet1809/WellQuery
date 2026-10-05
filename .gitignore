@@ -12,3 +12,5 @@ data/processed/
 *.sqlite3
 
 data/models/
+
+evaluation/results/

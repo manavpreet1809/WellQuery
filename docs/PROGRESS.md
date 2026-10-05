@@ -52,3 +52,9 @@ Verification: 52 offline tests pass, including citation integrity, missing evide
 Added clickable citation markers that open evidence cards, source titles/publishers/section names, exact support quotations, full passages, original-source links, and answer timing. Users choose source excerpts or optional Ollama synthesis, with explicit labels. All content is rendered as text; source URLs are restricted to HTTP(S). Loading, timeout, and server errors restore the form for retry.
 
 Verification: JavaScript syntax check and all 52 backend tests pass. Browser testing submitted a real question, displayed cited source excerpts, and opened the corresponding evidence card through a citation link. The full answer text remains a retrieval-quality target for evaluation; showing a citation does not certify relevance. Responsive styles are included; no formal accessibility audit is claimed.
+
+## Day 9 — evaluation tooling and draft run (human review pending)
+
+Added 60 explicitly unverified draft questions, grouped paraphrases, split-leakage checks, and a verified-only default. The runner compares four configurations with section-level Recall@5 and MRR@5, records latency, checks excerpt/refusal behavior and rule routes, and exports evidence for human claim review. Source/code/model/dataset provenance accompanies results. Exact-quote validity is not labeled answer correctness.
+
+Verification: 56 tests pass. A complete 60-question draft run produced JSON summaries, retrieval CSV, and answer-review JSONL. Verified-only execution correctly refuses because no questions have been reviewed by the user. The draft test split exposed lower recall with routing (13/14) than unrestricted hybrid (14/14); no quality improvement is claimed and no ranking change was made from this result. See evaluation/README.md for limitations. Human verification of questions and answers is outstanding, so the verified-evaluation acceptance goal is not complete.
