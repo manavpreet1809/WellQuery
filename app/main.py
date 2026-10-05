@@ -16,6 +16,7 @@ class AskRequest(BaseModel):
     threshold: float = Field(default=0.8, ge=0, le=1, allow_inf_nan=False)
     top_k: int = Field(default=5, ge=1, le=20)
     pool_k: int = Field(default=50, ge=1, le=100)
+    answer_style: Literal["excerpts", "ollama"] = "excerpts"
     max_dist: float = Field(default=0.85, ge=0, le=2, allow_inf_nan=False)
 
     @field_validator("question")
@@ -41,13 +42,18 @@ class AskResponse(BaseModel):
     chunks_used: int
     chunks: list[dict]
     refused: bool
-    mode: Literal["demo", "databricks"]
+    mode: Literal["demo", "databricks", "local"]
+    citations: list[dict] = Field(default_factory=list)
+    claims: list[dict] = Field(default_factory=list)
+    refusal_reason: str | None = None
+    answer_style: str = "legacy"
+    latency_ms: float = 0
 
 def create_app(mode: str | None = None, client=None, generate=None, search_database=None, search_embed=None) -> FastAPI:
     """Construct the app with injectable dependencies for offline tests."""
     backend = mode or settings.BACKEND_MODE
-    if backend not in {"demo", "databricks"}:
-        raise ValueError("BACKEND_MODE must be demo or databricks")
+    if backend not in {"demo", "databricks", "local"}:
+        raise ValueError("BACKEND_MODE must be demo, databricks, or local")
     application = FastAPI(title="WellQuery", version="0.2.0")
     application.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
     templates = Jinja2Templates(directory=ROOT / "templates")
@@ -78,6 +84,18 @@ def create_app(mode: str | None = None, client=None, generate=None, search_datab
 
     @application.post("/ask", response_model=AskResponse)
     def ask(req: AskRequest):
+        if backend == "local":
+            from app.answers import answer_local
+            from app.search import DATABASE
+            import sqlite3
+            import requests
+            try:
+                return answer_local(req.question, style=req.answer_style,
+                                    database=search_database or DATABASE, embed=search_embed, generate=generate)
+            except (RuntimeError, ImportError, OSError, sqlite3.Error, requests.RequestException):
+                raise HTTPException(503, "Local answering unavailable. Check the document index and selected model service.") from None
+            except (ValueError, KeyError, TypeError):
+                raise HTTPException(502, "The model returned an invalid response.") from None
         if backend == "demo":
             supported = req.question.lower().rstrip("?!. ") in {"what is wellquery", "what does wellquery do"}
             return dict(question=req.question, route="all", confidence=0,

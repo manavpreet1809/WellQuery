@@ -78,3 +78,11 @@ With the server running, use `/docs` to try `GET /search?q=diabetes%20symptoms&m
 Local routing is a transparent **rule-based baseline**, not the original trained Databricks classifier. It routes unambiguous medication/condition cues, leaves mixed or unknown questions unrestricted, and reports missing category coverage explicitly. The present condition-only corpus has no medication documents. Routing does not establish whether a question is safe or in scope, and vector results are not evidence that a question is answerable. Generated answers and citation validation are still a later stage.
 
 Semantic retrieval uses the model's default sequence-length limit; unusually long passages may be truncated during embedding. Keyword search uses the full passage. This limitation should be evaluated before expanding the corpus. Dense retrieval scans the small index exactly; it is not intended for a production-scale collection.
+
+## Cited local answers (Day 7)
+
+Set `BACKEND_MODE=local` in `.env` and restart the server after building the vector index. `/ask` now retrieves evidence and returns numbered citations, exact support quotes, refusal reasons, and timing. Its default `answer_style=excerpts` selects verbatim source sentences; it is **not LLM synthesis**. Existing `demo` and `databricks` modes remain available.
+
+Optional synthesis uses a locally running [Ollama chat API](https://docs.ollama.com/api/chat). Set `OLLAMA_MODEL` to a model you have installed, then request `answer_style=ollama`. Generated claims must cite retrieved chunk IDs and include exact support quotes. This checks citation existence and quotation accuracy, **not whether every claim logically follows from the quotation**. Do not report that validation as factual accuracy. The Ollama adapter is tested with injected responses; live model synthesis requires your local service and has not been verified.
+
+Phrase-based emergency/personal-advice/injection checks run before retrieval in local mode. Dosing patterns, malformed citations, and fabricated quotes block output. These incomplete rules can miss paraphrases or misread negation; they are not clinical triage, a privacy filter, or a complete prompt-injection defense. Legacy Databricks mode does not use these new local safeguards. No questions or answers are persisted by the local pipeline.

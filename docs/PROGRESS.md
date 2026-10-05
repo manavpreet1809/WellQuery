@@ -40,3 +40,9 @@ Day 5 verification: 33 offline tests passed. The actual pinned MiniLM model down
 Added reciprocal rank fusion, optional category routing, and a validated `/search` endpoint with metadata, component ranks, latency, and explicit empty-result reasons. The original Databricks classifier is still available in its remote flow. Because trained local artifacts are not supplied, the local comparator uses documented cue-based rules instead of claiming to reproduce that model. Medication search with routing reports missing coverage in the current condition-only corpus.
 
 Verification: 43 offline tests pass, covering hand-computed fusion scores, mixed/unknown routing, category filtering, API validation, missing stores, vector freshness, and previous ingestion/API behavior. Real keyword, vector, and hybrid endpoint smoke tests run against 38 indexed chunks. These checks establish operation, not a measured quality improvement. The scripted `/ask` behavior remains unchanged. Day 7 (grounded generation, citations, and safeguards) is next.
+
+## Day 7 — cited local answering and prototype boundaries
+
+Connected local hybrid retrieval to `/ask` in opt-in `local` mode. Default answers are explicitly labeled verbatim excerpts, with structured citations and quotes. Optional Ollama synthesis requests structured claims and rejects invalid citation IDs or nonverbatim support quotes. Guards precede retrieval; no evidence and invalid output fail closed. Rules are incomplete and quote validation is not semantic entailment.
+
+Verification: 52 offline tests pass, including citation integrity, missing evidence, guard ordering, and injected model behavior. A real local excerpt smoke test uses the indexed articles. Ollama model synthesis remains unverified without a configured local model. This distinction is visible in the interface and documentation.
