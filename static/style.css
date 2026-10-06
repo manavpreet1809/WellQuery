@@ -21,3 +21,11 @@ blockquote { margin: 12px 0; padding-left: 12px; border-left: 3px solid #14766b;
 a { color: #075d79; text-underline-offset: 3px; }
 select { width: 100%; padding: 10px; margin: 8px 0; font: inherit; }
 @media (max-width: 540px) { body { padding: 10px; } main { padding: 16px; margin: 10px auto; } .answer { padding: 12px; } }
+.dashboard { max-width: 1080px; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+caption { text-align: left; font-weight: 600; padding: 12px 0; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #d9e5e1; }
+thead { background: #edf5f2; }
+meter { width: 70px; }
+dd { margin: 0 0 12px; overflow-wrap: anywhere; }

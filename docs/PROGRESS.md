@@ -58,3 +58,9 @@ Verification: JavaScript syntax check and all 52 backend tests pass. Browser tes
 Added 60 explicitly unverified draft questions, grouped paraphrases, split-leakage checks, and a verified-only default. The runner compares four configurations with section-level Recall@5 and MRR@5, records latency, checks excerpt/refusal behavior and rule routes, and exports evidence for human claim review. Source/code/model/dataset provenance accompanies results. Exact-quote validity is not labeled answer correctness.
 
 Verification: 56 tests pass. A complete 60-question draft run produced JSON summaries, retrieval CSV, and answer-review JSONL. Verified-only execution correctly refuses because no questions have been reviewed by the user. The draft test split exposed lower recall with routing (13/14) than unrestricted hybrid (14/14); no quality improvement is claimed and no ranking change was made from this result. See evaluation/README.md for limitations. Human verification of questions and answers is outstanding, so the verified-evaluation acceptance goal is not complete.
+
+## Final delivery, part 1 — results dashboard
+
+Added a read-only `/evaluation` dashboard with run selection, split/configuration comparison, Recall@5 bars, MRR@5, latency, behavior counts, and provenance. Verification labels are derived from counts rather than trusting a summary's label. Missing/invalid summaries are handled explicitly; answers and question text are not exposed through this page.
+
+Verification: 60 tests pass. Browser verification displayed the real draft run, including 0/60 verified questions and the routing regression, and confirmed run selection. The dashboard reports development evidence, not clinically validated accuracy.

@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WellQuery · Evaluation</title><link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}"></head>
+<body><main class="dashboard"><nav><a href="/">← Chat</a></nav><h1>Evaluation results</h1>
+<p>Compare retrieval methods and inspect what has actually been reviewed.</p>
+<p class="notice">Question verification and exact quotations do not establish answer correctness or clinical safety.</p>
+{% if skipped %}<p role="status">{{ skipped }} invalid summary file(s) were skipped.</p>{% endif %}
+{% if not runs %}<h2>No evaluation runs yet</h2><p>Run <code>python -m evaluation.run --include-drafts</code> from your configured project environment. Draft results will be labeled as unverified.</p>
+{% else %}<form method="get"><label for="run">Evaluation run</label><select id="run" name="run">{% for item in runs %}<option value="{{ item.id }}" {% if item.id == selected.id %}selected{% endif %}>{{ item.id }} — {{ 'Draft' if item.draft else 'Reviewed questions' }}</option>{% endfor %}</select><button type="submit">View run</button></form>
+<h2>{{ 'Draft development results' if selected.draft else 'Human-verified question set' }}</h2>
+<p><strong>{{ selected.verified_count }} / {{ selected.question_count }}</strong> questions verified. Answer support still requires separate human review.</p>
+<p class="source-meta">Run timestamp (UTC): {{ selected.created_at }}</p>
+<div class="table-scroll"><table><caption>Retrieval by split and configuration</caption><thead><tr><th scope="col">Split / method</th><th scope="col">Questions</th><th scope="col">Recall@5</th><th scope="col">MRR@5</th><th scope="col">p95 ms</th></tr></thead><tbody>
+{% for row in selected.metrics %}<tr><th scope="row">{{ row.split }} / {{ row.configuration }}</th><td>{{ row.n }}</td><td><meter min="0" max="1" value="{{ row.recall_at_5 }}" aria-label="Recall at five for {{ row.configuration }} on {{ row.split }}"></meter> {{ '%.3f'|format(row.recall_at_5) }}</td><td>{{ '%.3f'|format(row.mrr_at_5) }}</td><td>{{ '%.1f'|format(row.p95_ms) }}</td></tr>{% endfor %}
+</tbody></table></div><p class="source-meta">Recall counts distinct labeled source sections. MRR measures the first relevant result. Initial model loading can affect latency; these timings are not controlled benchmarks.</p>
+<h2>Response behaviour checks</h2><ul>{% for row in selected.behaviours %}<li>{{ row.name }}: {{ '%.1f'|format(100 * row.match_rate) }}% matched the expected category across {{ row.n }} examples.</li>{% else %}<li>No answer behaviour results in this run.</li>{% endfor %}</ul>
+<p>Matching an answer/refusal category does not measure factual accuracy. Small phrase-based tests are not evidence of robust emergency detection.</p>
+<details><summary>Run provenance</summary><dl><dt>Embedding model</dt><dd>{{ selected.model }}</dd><dt>Git revision</dt><dd>{{ selected.git_sha }}</dd><dt>Uncommitted code during run</dt><dd>{{ 'Yes / unknown' if selected.dirty else 'No' }}</dd><dt>Corpus fingerprint</dt><dd>{{ selected.corpus_sha256 }}</dd></dl></details>
+{% endif %}</main></body></html>

@@ -49,7 +49,7 @@ class AskResponse(BaseModel):
     answer_style: str = "legacy"
     latency_ms: float = 0
 
-def create_app(mode: str | None = None, client=None, generate=None, search_database=None, search_embed=None) -> FastAPI:
+def create_app(mode: str | None = None, client=None, generate=None, search_database=None, search_embed=None, evaluation_root=None) -> FastAPI:
     """Construct the app with injectable dependencies for offline tests."""
     backend = mode or settings.BACKEND_MODE
     if backend not in {"demo", "databricks", "local"}:
@@ -62,6 +62,16 @@ def create_app(mode: str | None = None, client=None, generate=None, search_datab
     @application.get("/ui", response_class=HTMLResponse)
     def ui(request: Request):
         return templates.TemplateResponse(request=request, name="index.html", context={"mode": backend})
+
+    @application.get("/evaluation", response_class=HTMLResponse)
+    def evaluation_page(request: Request, run: str | None = Query(default=None, max_length=100)):
+        from app.dashboard import RESULTS, load_runs
+        runs, skipped = load_runs(evaluation_root if evaluation_root is not None else RESULTS)
+        selected = next((item for item in runs if item['id'] == run), None) if run else (runs[0] if runs else None)
+        if run and selected is None:
+            raise HTTPException(404, "Evaluation run not found")
+        return templates.TemplateResponse(request=request, name="evaluation.html", context={
+            "runs": runs, "selected": selected, "skipped": skipped})
 
     @application.get("/health")
     def health():

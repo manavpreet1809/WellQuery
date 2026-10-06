@@ -92,3 +92,5 @@ In local mode, click a numbered citation to expand its source card. Cards show p
 ## Evaluate and review (Day 9)
 
 Run `.venv/bin/python -m evaluation.run --include-drafts` to compare four search configurations and export excerpt answers for review. The 60-question set is entirely **unverified**. The default command omits drafts and currently refuses to run without reviewed questions. See [evaluation definitions, results limitations, and review instructions](evaluation/README.md). No verified accuracy or clinical-safety claim is made.
+
+The [local results dashboard](http://127.0.0.1:8000/evaluation) displays saved evaluation runs, comparison tables, recall bars, response-behaviour counts, and provenance. It labels unverified runs as drafts. A fresh checkout needs an evaluation run before results appear.
