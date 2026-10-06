@@ -1,96 +1,69 @@
 # WellQuery
 
-A third-year university project exploring evidence-based answers to general health-information questions using document retrieval, question routing, and an LLM.
+A third-year university project that explores general health information through document search, cited source excerpts, and inspectable evidence. Built by Manavpreet Singh on his earlier MediBot project.
 
-WellQuery builds on Manavpreet Singh's existing MediBot project, adding hybrid retrieval, citations, an evidence panel, and comparative evaluation.
+**Current status:** the local excerpt demo, hybrid search, evidence interface, and evaluation dashboard work. Optional Ollama synthesis is integrated but not verified against a live model. The starter corpus has 3 diabetes articles and 38 chunks. All 60 evaluation questions are still drafts awaiting human review. This is an independent student prototype, not medical advice or a clinically validated system.
 
-The project is hosted in the [WellQuery repository](https://github.com/manavpreet1809/WellQuery). Its scope is not limited to Canadian public-health sources.
+## Run the local demo
 
-## Planned features
-
-- Keyword, vector, and hybrid document search.
-- Medication and condition question routing.
-- Answers with passage-level citations and expandable evidence.
-- Insufficient-evidence responses and basic prototype safety boundaries.
-- A dashboard comparing retrieval quality, answer support, routing accuracy, and latency.
-
-## Status
-
-The original MediBot baseline is imported and an offline scripted chat demo is available. Local retrieval, cited excerpt answers, prototype safeguards, an evidence panel, and a draft evaluation runner are implemented. Live model synthesis and human-verified evaluation remain outstanding. See [project scope and stages](PROJECT_SCOPE.md) and [provenance and reuse status](ATTRIBUTION.md).
-
-The first release targets a local demo using a small permitted document collection and fictional evaluation inputs. Setup instructions and measured results will be added as implementation progresses.
-
-Independent student project; not affiliated with a health authority. General information only, not medical advice. Prototype safeguards are not clinically validated.
-
-## Run locally (Python 3.12)
+Requires Python 3.12, [uv](https://docs.astral.sh/uv/), and `make`. Run from the repository root:
 
 ```sh
-uv venv --python 3.12 .venv
-uv pip install --python .venv/bin/python -r requirements-dev.txt
-cp .env.example .env
-make run
+make setup       # install pinned demo + test dependencies into .venv
+make ingest      # download catalogued articles, observing robots.txt
+make index       # explicitly download the pinned MiniLM model and embed documents
+make smoke       # check the store, index, local model, and cited-excerpt flow
+make evaluate    # generate clearly labeled DRAFT evaluation results
+make local       # start the local excerpt backend on 127.0.0.1:8000
 ```
 
-Open http://127.0.0.1:8000 and ask **What is WellQuery?** The default `BACKEND_MODE=demo` is a scripted UI demonstration, not medical retrieval or LLM generation. Other questions receive an insufficient-evidence response.
+Open [the chat](http://127.0.0.1:8000), [evaluation dashboard](http://127.0.0.1:8000/evaluation), or [API documentation](http://127.0.0.1:8000/docs). Try “What are the symptoms of type 2 diabetes?” and click a citation to inspect the source. `make local` selects the local backend without changing your `.env`.
 
-For the original remote flow, set `BACKEND_MODE=databricks`, configure the endpoint variables in `.env`, and install `requirements-llm.txt`. This requires your own Databricks deployments and access to the configured Hugging Face model; the model downloads on first generation. Endpoint responses must contain full `chunk_text`, not previews. No live remote inference has been verified in this repository.
+Initial setup needs internet access for dependencies, articles, and model weights. The default local excerpt path uses no paid API and sends no questions to a hosted inference service. Generated databases, model files, reviews, and run results stay out of Git. Fresh checkouts must generate their own results. The pinned dependency snapshot was tested on macOS Apple Silicon with Python 3.12; other platforms remain unverified. It is a version snapshot, not a security audit or a hash-locked distribution.
 
-Run `make check` for offline API tests and whitespace checks. Tests use injected services and never download a model or send questions to Databricks.
+## What it does
 
-## Document ingestion
+- Extracts curated HTML/text sources into section-aware chunks with publisher, URL, permission details, and content hashes.
+- Compares BM25 keyword search, MiniLM vector search, hybrid reciprocal rank fusion, and optional rule-based category routing.
+- Returns verbatim source excerpts by default, with numbered citations and expandable support passages.
+- Offers optional local Ollama synthesis with citation-ID and exact-support-quote checks.
+- Applies prototype phrase rules for emergency, personal-advice, and injection requests before local retrieval.
+- Compares retrieval configurations and exports answers for separate human review.
+- Displays evaluation runs with explicit draft/verified-question counts and limitations.
 
-A three-article NIDDK starter catalogue and local SQLite ingestion pipeline are available. Install the updated requirements and run:
+![Draft evaluation dashboard](docs/images/evaluation.jpg)
 
-```sh
-.venv/bin/python -m app.ingest --download
-```
+## Commands
 
-See [source permissions, cache behavior, and limitations](data/README.md). The initial run produced **38 chunks**; an unchanged rerun made zero document updates. These are ingestion checks, not retrieval or answer-quality results. The document store now supports cited answers when BACKEND_MODE=local.
+| Command | Purpose |
+|---|---|
+| `make check` | Offline tests and whitespace validation |
+| `make doctor` | Check dependency and data/index prerequisites without loading the model |
+| `make smoke` | Exercise local excerpts and citations with the real cached embedding model |
+| `make local` | Run the local evidence-backed demo |
+| `make run` | Run the backend selected by `BACKEND_MODE` (defaults to scripted `demo`) |
+| `make evaluate` | Run the unverified development set; results are not headline accuracy |
+| `.venv/bin/python -m evaluation.run` | Run only human-verified questions; fails if none exist |
 
-See [commit progress](docs/PROGRESS.md) for completed work and remaining validation.
+After changing source documents, rerun ingestion and index creation. Vector search detects stale content. For explicit refresh use `.venv/bin/python -m app.ingest --download --refresh`.
 
-## Local search
+## Optional model synthesis and original MediBot mode
 
-Keyword search uses BM25 and works with the web requirements alone:
+To enable synthesis, run Ollama locally with a model you have separately installed and set `OLLAMA_MODEL` in `.env`. Start `make local`, select **AI synthesis**, and inspect its support quotes. This mode calls the local [Ollama chat API](https://docs.ollama.com/api/chat). Without the model/service it reports unavailability; it does not silently substitute generated-looking excerpts. No live Ollama test has been completed here.
 
-```sh
-.venv/bin/python -m app.search "diabetes symptoms" --mode keyword
-```
+The original `BACKEND_MODE=databricks` flow is retained for comparison and requires your serving endpoints and the original local generation dependencies in `requirements-llm.txt`. Those legacy pins should be tested in a **separate environment**, not mixed into the tested demo snapshot. Databricks inference remains unverified; the new local safeguards are not applied to the legacy flow. See `.env.example` and [provenance](ATTRIBUTION.md).
 
-For semantic search, install the optional embedding dependencies and explicitly download/index the pinned MiniLM model:
+## Evidence, evaluation, and limits
 
-```sh
-uv pip install --python .venv/bin/python -r requirements-search.txt
-.venv/bin/python -m app.search --index --download-model
-.venv/bin/python -m app.search "high blood sugar" --mode vector
-```
+Citation validation checks that source IDs exist and quotes match retrieved passages. It does **not** prove that a synthesized claim follows from that quote. Retrieval relevance, answer support, and clinical safety are distinct.
 
-Model files stay in ignored `data/models/`. Searches load the model locally and do not download it automatically. Rebuild the index after ingestion changes. Scores are relevance signals, not probabilities of truth or medical confidence. This is passage retrieval; `/ask` defaults to a scripted demo; set BACKEND_MODE=local for evidence-backed excerpts or explicitly selected Ollama synthesis.
+The three-article collection covers conditions, not medications. Local routing is a simple rule baseline; the trained MediBot classifier remains remote. Draft results exposed worse retrieval with routing on one split, so no routing improvement is claimed. Phrase safeguards can miss paraphrases or misread negation, and vector scores are not medical confidence. The app is intended for a local classroom demo, not public clinical use. Avoid entering personal health information; there is no comprehensive PII filter.
 
-## Hybrid search and routing
+- [Evaluation definitions and human review workflow](evaluation/README.md)
+- [Source permissions and ingestion limitations](data/README.md)
+- [Architecture and design tradeoffs](docs/ARCHITECTURE.md)
+- [Two-minute demo and troubleshooting](docs/DEMO.md)
+- [Completion checklist](docs/STATUS.md)
+- [Original scope](PROJECT_SCOPE.md) and [commit history notes](docs/PROGRESS.md)
 
-```sh
-.venv/bin/python -m app.search "diabetes symptoms" --mode hybrid --routing
-```
-
-With the server running, use `/docs` to try `GET /search?q=diabetes%20symptoms&mode=hybrid&routing=true`. Modes are `keyword`, `vector`, and `hybrid`; omit routing to compare against unrestricted retrieval. Each result includes source metadata, the full passage, its score, and component ranks. Hybrid retrieval combines up to 50 candidates from each method with reciprocal rank fusion (constant 60).
-
-Local routing is a transparent **rule-based baseline**, not the original trained Databricks classifier. It routes unambiguous medication/condition cues, leaves mixed or unknown questions unrestricted, and reports missing category coverage explicitly. The present condition-only corpus has no medication documents. Routing does not establish whether a question is safe or in scope, and vector results are not evidence that a question is answerable. Local answer citation validation is now available; it does not establish semantic entailment.
-
-Semantic retrieval uses the model's default sequence-length limit; unusually long passages may be truncated during embedding. Keyword search uses the full passage. This limitation should be evaluated before expanding the corpus. Dense retrieval scans the small index exactly; it is not intended for a production-scale collection.
-
-## Cited local answers (Day 7)
-
-Set `BACKEND_MODE=local` in `.env` and restart the server after building the vector index. `/ask` now retrieves evidence and returns numbered citations, exact support quotes, refusal reasons, and timing. Its default `answer_style=excerpts` selects verbatim source sentences; it is **not LLM synthesis**. Existing `demo` and `databricks` modes remain available.
-
-Optional synthesis uses a locally running [Ollama chat API](https://docs.ollama.com/api/chat). Set `OLLAMA_MODEL` to a model you have installed, then request `answer_style=ollama`. Generated claims must cite retrieved chunk IDs and include exact support quotes. This checks citation existence and quotation accuracy, **not whether every claim logically follows from the quotation**. Do not report that validation as factual accuracy. The Ollama adapter is tested with injected responses; live model synthesis requires your local service and has not been verified.
-
-Phrase-based emergency/personal-advice/injection checks run before retrieval in local mode. Dosing patterns, malformed citations, and fabricated quotes block output. These incomplete rules can miss paraphrases or misread negation; they are not clinical triage, a privacy filter, or a complete prompt-injection defense. Legacy Databricks mode does not use these new local safeguards. No questions or answers are persisted by the local pipeline.
-
-In local mode, click a numbered citation to expand its source card. Cards show publisher, section, support quotes, the full passage, and an original-source link. The answer-style selector distinguishes verbatim excerpts from optional AI synthesis; errors keep your question available for retry.
-
-## Evaluate and review (Day 9)
-
-Run `.venv/bin/python -m evaluation.run --include-drafts` to compare four search configurations and export excerpt answers for review. The 60-question set is entirely **unverified**. The default command omits drafts and currently refuses to run without reviewed questions. See [evaluation definitions, results limitations, and review instructions](evaluation/README.md). No verified accuracy or clinical-safety claim is made.
-
-The [local results dashboard](http://127.0.0.1:8000/evaluation) displays saved evaluation runs, comparison tables, recall bars, response-behaviour counts, and provenance. It labels unverified runs as drafts. A fresh checkout needs an evaluation run before results appear.
+The final submission still needs human question/answer review, broader source coverage, and live synthesis validation if synthesis is presented as a working feature.

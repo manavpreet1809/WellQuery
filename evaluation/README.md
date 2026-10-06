@@ -31,7 +31,7 @@ Retrieval compares keyword BM25, vector cosine, hybrid RRF, and hybrid with loca
 
 The first 60-question run completed on October 4, 2026 (America/Edmonton). Its draft test split had 14 factual questions: hybrid retrieval found labeled sections within five results for all 14, while hybrid plus routing did so for 13. This is evidence of a development issue, not a validated quality estimate. The narrow condition-only corpus makes medication routing particularly brittle. No routing improvement is claimed.
 
-The emergency/injection examples are small and close to the phrase rules; they do not measure robust safety. Expand with independently written paraphrases, negations, ambiguous requests, and broader topics. Model loading affects the first vector latency; current timings are not a controlled benchmark. The default three-source collection and AI-derived labels limit generalization. The final dashboard and presentation remain Day 10; human review is still required to close Day 9's verified-evaluation goal.
+The emergency/injection examples are small and close to the phrase rules; they do not measure robust safety. Expand with independently written paraphrases, negations, ambiguous requests, and broader topics. Model loading affects the first vector latency; current timings are not a controlled benchmark. The default three-source collection and AI-derived labels limit generalization. The results dashboard is available at /evaluation and the demo script is in docs/DEMO.md. Human review is still required to close Day 9's verified-evaluation goal.
 
 ## Review tools
 

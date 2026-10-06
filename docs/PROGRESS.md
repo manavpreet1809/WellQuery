@@ -70,3 +70,9 @@ Verification: 60 tests pass. Browser verification displayed the real draft run, 
 Added review-packet export with source evidence, explicit approve/reject decisions, reviewer notes, dataset fingerprints, and application to a new output file. Added answer-review summaries that separate coverage, support, relevance, and uncertain judgments. Export is read-only; no project questions have been automatically verified.
 
 Verification: 67 tests pass, including stale-packet rejection, incomplete decisions, original-file preservation, exclusive output creation, and zero-review reporting. Exported a local packet for all 60 questions with every decision blank. Real human verification remains outstanding.
+
+## Final delivery, part 3 — reproducible demo package
+
+Added a pinned snapshot of the tested demo/test dependencies, setup/ingest/index/evaluate/local commands, a read-only doctor command, and an opt-in real-model smoke check. Rewrote the README around the current implementation, added architecture tradeoffs, a two-minute demo script, a dashboard screenshot, and an explicit completion checklist.
+
+Verification: the dependency snapshot installed into a separate temporary Python 3.12 environment. All 70 tests and the real 38-chunk cited-excerpt smoke check passed there. JavaScript syntax and Git whitespace checks passed. One upstream Starlette/AnyIO deprecation warning remains. This validates the local excerpt demo on macOS Apple Silicon, not live Ollama/Databricks inference or clinical correctness. Human review, corpus expansion, and a recorded presentation remain outstanding.
