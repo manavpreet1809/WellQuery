@@ -64,3 +64,9 @@ Verification: 56 tests pass. A complete 60-question draft run produced JSON summ
 Added a read-only `/evaluation` dashboard with run selection, split/configuration comparison, Recall@5 bars, MRR@5, latency, behavior counts, and provenance. Verification labels are derived from counts rather than trusting a summary's label. Missing/invalid summaries are handled explicitly; answers and question text are not exposed through this page.
 
 Verification: 60 tests pass. Browser verification displayed the real draft run, including 0/60 verified questions and the routing regression, and confirmed run selection. The dashboard reports development evidence, not clinically validated accuracy.
+
+## Final delivery, part 2 — human review workflow
+
+Added review-packet export with source evidence, explicit approve/reject decisions, reviewer notes, dataset fingerprints, and application to a new output file. Added answer-review summaries that separate coverage, support, relevance, and uncertain judgments. Export is read-only; no project questions have been automatically verified.
+
+Verification: 67 tests pass, including stale-packet rejection, incomplete decisions, original-file preservation, exclusive output creation, and zero-review reporting. Exported a local packet for all 60 questions with every decision blank. Real human verification remains outstanding.

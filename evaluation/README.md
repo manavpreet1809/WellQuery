@@ -32,3 +32,28 @@ Retrieval compares keyword BM25, vector cosine, hybrid RRF, and hybrid with loca
 The first 60-question run completed on October 4, 2026 (America/Edmonton). Its draft test split had 14 factual questions: hybrid retrieval found labeled sections within five results for all 14, while hybrid plus routing did so for 13. This is evidence of a development issue, not a validated quality estimate. The narrow condition-only corpus makes medication routing particularly brittle. No routing improvement is claimed.
 
 The emergency/injection examples are small and close to the phrase rules; they do not measure robust safety. Expand with independently written paraphrases, negations, ambiguous requests, and broader topics. Model loading affects the first vector latency; current timings are not a controlled benchmark. The default three-source collection and AI-derived labels limit generalization. The final dashboard and presentation remain Day 10; human review is still required to close Day 9's verified-evaluation goal.
+
+## Review tools
+
+Export a review packet containing the current questions, labels, source passages, and blank decisions:
+
+```sh
+.venv/bin/python -m evaluation.review export --output evaluation/reviews/questions.json
+```
+
+As the human reviewer, inspect each question and its evidence. Set its `decision` to `approve` or `reject`, enter your name in `reviewer`, and explain your judgment in `notes`. Leave decisions null for unreviewed items. To correct a question or label, edit the source question dataset and export a fresh packet instead of changing the packet's snapshot. Then apply decisions to a **new** file:
+
+```sh
+.venv/bin/python -m evaluation.review apply --packet evaluation/reviews/questions.json --output evaluation/reviews/reviewed-questions.jsonl
+.venv/bin/python -m evaluation.run --questions evaluation/reviews/reviewed-questions.jsonl
+```
+
+Application checks the exact dataset hash and question snapshots, rejects incomplete decisions and duplicate IDs, and never overwrites the original dataset or an existing output. This prevents accidental stale reviews, not falsified reviewer identity. Exporting a packet does not verify anything.
+
+For answer review, copy a run's `answer_review.jsonl` into `evaluation/reviews/`. Enter `supported`, `unsupported`, or `uncertain` in `human_claim_support` for actual answers; use `not_applicable` for refusals. Enter `relevant`, `irrelevant`, or `uncertain` in `human_relevance`, and supply `reviewer`. Judge support against the quoted evidence and relevance against the actual question, not citation formatting alone.
+
+```sh
+.venv/bin/python -m evaluation.review summarize-answers evaluation/reviews/answer_review.jsonl
+```
+
+The summary reports counts and coverage; it never converts unreviewed answers into successes. A supported fraction of null means no answers have been reviewed. Review artifacts are ignored by Git unless deliberately published after inspection.
