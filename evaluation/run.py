@@ -117,7 +117,21 @@ def run(questions: list[dict], database: Path, output: Path, *, include_answers=
         group=[r for r in reviews if r['expected']==outcome]
         summary['behaviour_checks'][outcome]={'n':len(group),'match_rate':statistics.mean(r['behaviour_match'] for r in group)}
     summary['rule_route_accuracy']=statistics.mean(r['rule_route']==r['expected_route'] for r in reviews) if reviews else None
+    failures = []
+    for row in rows:
+        if row['recall_at_5'] < 1:
+            failures.append(dict(kind='retrieval_miss', **row))
+    for review in reviews:
+        if not review['behaviour_match']:
+            failures.append(dict(kind='behaviour_mismatch', id=review['id'],
+                                 expected=review['expected'], actual=review['actual']))
+        if review['rule_route'] != review['expected_route']:
+            failures.append(dict(kind='route_mismatch', id=review['id'],
+                                 expected=review['expected_route'], actual=review['rule_route']))
+    summary['failure_counts'] = {kind: sum(f['kind'] == kind for f in failures)
+                                for kind in ('retrieval_miss', 'behaviour_mismatch', 'route_mismatch')}
     output.mkdir(parents=True,exist_ok=False)
+    (output/'failures.jsonl').write_text(''.join(json.dumps(f)+'\n' for f in failures))
     (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
     if rows:
         with (output/'retrieval.csv').open('w',newline='') as f:

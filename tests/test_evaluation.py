@@ -41,3 +41,18 @@ def test_export_labels_drafts_and_leaves_human_fields_empty(db,tmp_path,monkeypa
     assert review['human_claim_support'] is None
     assert review['quote_validity'] is None
     with pytest.raises(FileExistsError):run([question()],db,output)
+
+
+def test_failures_preserve_partial_retrieval_and_wrong_behaviour(db,tmp_path,monkeypatch):
+    import evaluation.run as module
+    monkeypatch.setattr(module,'search_report',lambda *a,**k:dict(hits=[],latency_ms=1))
+    monkeypatch.setattr(module,'answer_local',lambda *a,**k:dict(refused=True,refusal_reason='insufficient_evidence',answer='No evidence',citations=[],claims=[]))
+    output=tmp_path/'failures'
+    summary=run([question()],db,output)
+    assert summary['failure_counts']['retrieval_miss']==4
+    assert summary['failure_counts']['behaviour_mismatch']==1
+    failures=[json.loads(line) for line in (output/'failures.jsonl').read_text().splitlines()]
+    mismatch=next(f for f in failures if f['kind']=='behaviour_mismatch')
+    assert mismatch['expected']=='answer'
+    assert mismatch['actual']=='insufficient_evidence'
+    assert json.loads((output/'answer_review.jsonl').read_text())['reviewer'] is None

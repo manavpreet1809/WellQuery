@@ -57,3 +57,15 @@ For answer review, copy a run's `answer_review.jsonl` into `evaluation/reviews/`
 ```
 
 The summary reports counts and coverage; it never converts unreviewed answers into successes. A supported fraction of null means no answers have been reviewed. Review artifacts are ignored by Git unless deliberately published after inspection.
+
+### Expanded-corpus challenge set
+
+`challenge_questions.jsonl` contains 20 additional **unverified development** cases: kidney and medicine retrieval, unfamiliar emergency/personal-advice/injection phrasing, unrelated questions with topic overlap, and negation. It is separate from the original 60 questions and is not a held-out benchmark. Review its relevance and route labels before drawing conclusions.
+
+```sh
+.venv/bin/python -m evaluation.run --questions evaluation/challenge_questions.jsonl --include-drafts
+```
+
+Every new run also writes `failures.jsonl`: incomplete section retrieval per configuration, behavior mismatches, and route mismatches. Counts are events, not unique failed questions. A retrieval-only run has no behavior judgments. Human answer-review fields remain blank.
+
+The October 7 draft run against 15 sources/201 chunks produced 7 retrieval-miss events, 6 behavior mismatches, and 9 route mismatches. It missed unfamiliar urgent phrasing, personal-dose and injection requests, answered a laptop question containing “diabetes,” and falsely blocked a negated chest-pain question. These are known prototype limitations. No rule changes were fitted to this set; future improvements need separate evaluation cases. Historical three-source scores are not expanded-corpus scores.
