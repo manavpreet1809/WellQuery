@@ -1,8 +1,8 @@
 """Transparent local routing baseline; not a trained medical classifier."""
 import re
 
-DRUG = {'medication', 'medicine', 'drug', 'tablet', 'ibuprofen', 'metformin', 'insulin', 'dosage'}
-CONDITION = {'diabetes', 'symptom', 'symptoms', 'disease', 'condition', 'prediabetes', 'glucose'}
+DRUG = {'medication', 'medicine', 'drug', 'tablet', 'ibuprofen', 'metformin', 'insulin', 'dosage', 'medicines', 'medications', 'drugs', 'tablets'}
+CONDITION = {'diabetes', 'symptom', 'symptoms', 'disease', 'condition', 'prediabetes', 'glucose', 'kidney', 'kidneys', 'ckd', 'gfr', 'albumin', 'glomerulus'}
 
 
 def route_question(question: str) -> dict:

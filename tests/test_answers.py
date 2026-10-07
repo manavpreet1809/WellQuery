@@ -38,3 +38,16 @@ def test_model_integration_and_failed_output(db):
     assert response.status_code==200 and response.json()['citations']
     bad=answer_local('glucose',style='ollama',database=db,embed=embed,generate=lambda *a:{'claims':[{}]})
     assert bad['refusal_reason']=='invalid_output'
+
+
+def test_excerpts_skip_blocked_sentence_without_losing_other_evidence(monkeypatch):
+    import app.answers as module
+    hit=dict(chunk_id='a',text='Albumin is a protein measured in urine. Albumin result of 30 mg/g needs interpretation.',document_id='a')
+    monkeypatch.setattr(module,'search_report',lambda *a,**k:dict(hits=[hit],route={'category':'condition'}))
+    result=answer_local('albumin urine')
+    assert not result['refused']
+    assert result['answer']=='Albumin is a protein measured in urine. [1]'
+
+
+def test_coding_request_with_health_overlap_precedes_search(tmp_path):
+    assert answer_local('Write a sorting algorithm for diabetes data',database=tmp_path/'absent')['refusal_reason']=='insufficient_evidence'

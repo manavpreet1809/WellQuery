@@ -3,20 +3,9 @@ import re
 from time import perf_counter
 from app.search import DATABASE, search_report, tokens
 
-EMERGENCY = re.compile(r'\b(chest pain|can(?:not|\x27t) breathe|trouble breathing|severe bleeding|overdose|kill myself|suicidal)\b', re.I)
-PERSONAL = re.compile(r'\b(diagnose me|do i have|should i (?:take|stop|start|change)|how much .{0,50}should i|what dose|my dose)\b', re.I)
-INJECTION = re.compile(r'ignore (?:all |previous )?instructions|system prompt|you are now', re.I)
-STOP = set('a an the what is are of to for how why do does can in and or me about tell explain'.split())
+from app.boundaries import guard, PERSONAL, INJECTION
 
-def guard(question: str) -> tuple[str, str] | None:
-    """Conservative phrase rules; context, negation, and unseen phrasing are limitations."""
-    if EMERGENCY.search(question):
-        return 'emergency', 'If this may be an emergency, contact your local emergency services now. This prototype cannot assess emergencies.'
-    if PERSONAL.search(question):
-        return 'personal_advice', 'I cannot diagnose you or recommend personal medication changes. Please speak with a qualified healthcare professional.'
-    if INJECTION.search(question):
-        return 'injection', 'I can only help explore information in the available documents.'
-    return None
+STOP = set('a an the what is are of to for how why do does can in and or me about tell explain'.split())
 
 
 def ollama_claims(question: str, evidence: list[dict]) -> dict:
@@ -74,15 +63,20 @@ def answer_local(question: str, *, style: str = 'excerpts', database=DATABASE, e
         return finish('insufficient_evidence')
     if style == 'excerpts':
         ranked = []
-        for hit in hits:
+        for rank, hit in enumerate(hits):
             for sentence in re.split(r'(?<=[.!?])\s+', hit['text']):
                 overlap = len(meaningful & (set(tokens(sentence)) - STOP))
                 if overlap and 15 <= len(sentence) <= 1200:
-                    ranked.append((overlap, hit['chunk_id'], sentence))
+                    candidate = dict(text=sentence, source_id=hit['chunk_id'], quote=sentence)
+                    try:
+                        validate_claims({'claims': [candidate]}, [hit])
+                    except ValueError:
+                        continue
+                    ranked.append((overlap, rank, hit['chunk_id'], sentence))
         ranked.sort(key=lambda x: (-x[0], x[1]))
         claims = []
         seen = set()
-        for _, key, sentence in ranked:
+        for _, _, key, sentence in ranked:
             if sentence not in seen:
                 claims.append(dict(text=sentence, source_id=key, quote=sentence))
                 seen.add(sentence)
