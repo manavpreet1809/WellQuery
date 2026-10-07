@@ -1,27 +1,23 @@
-# Completion checklist
+# Completion scope — local student-project release
 
-## Implemented and tested
+## Implemented and verified
 
-- [x] Imported original MediBot baseline with provenance.
-- [x] Local API startup, request validation, and failure handling.
-- [x] Fifteen-source catalogue, section extraction, chunking, and SQLite persistence.
-- [x] Keyword/vector/hybrid retrieval and local routing baseline.
-- [x] Cited excerpt answers and prototype safeguards.
-- [x] Optional Ollama adapter tested using injected model responses and HTTP fixtures; readiness/live-probe commands available.
-- [x] Evidence panel verified in a real browser.
-- [x] Evaluation runner and 80 explicitly draft questions and per-case failure exports.
-- [x] Results dashboard with draft status and provenance.
-- [x] Human-review packet tools; no automatic verification.
-- [x] Dependency snapshot, readiness/smoke commands, architecture, and demo script.
+- [x] Imported MediBot baseline with hashes and attribution.
+- [x] Local ingestion of 15 sources into 201 attributed chunks.
+- [x] Keyword, vector, hybrid, and rule-routed search.
+- [x] Cited excerpts, evidence interface, and request/output boundaries.
+- [x] Fixes for observed challenge failures, with regression tests.
+- [x] Live Qwen2.5 1.5B synthesis using immutable evidence IDs.
+- [x] Live browser answer and evidence-panel verification.
+- [x] 92 draft evaluation questions, failure reports, and review tools.
+- [x] Controlled original-MediBot-prompt comparison and preserved outputs.
+- [x] Reproducible setup, smoke checks, automated-test CI, and demo guide.
+- [x] Final technical report and checked-in result summaries.
 
-## Outstanding before a finished submission
+## Human submission steps
 
-- [ ] Human review of the question labels and exported answer support/relevance.
-- [ ] A fresh held-out set if the current test split is used to guide further changes.
-- [x] Expand to the planned minimum: 15 catalogued documents across diabetes, kidney health, and medication information.
-- [ ] Live Ollama validation if synthesis is included in the presentation.
-- [ ] Record and review a demo video and align the final report with the course rubric.
+- [ ] Personally review question labels and answer support/relevance; all remain unverified.
+- [ ] Align the report with the course rubric and disclose prior work/AI assistance as required.
+- [ ] Record your presentation if the course requires one; the script and screenshot are supplied.
 
-The implemented tooling is not evidence of clinical safety. The project remains a local student prototype with narrow topic coverage; completed commits do not make all acceptance goals complete.
-
-The expanded-corpus challenge run exposed 6 behavior mismatches out of 20 unverified development cases, including emergency paraphrases and negation. These known rule limitations remain open.
+The local software release is implemented and tested. Human/clinical validation is not complete. The supplementary set retrieves the labeled section for 4/6 factual questions; rule boundaries and answer quality remain limitations. See REPORT.md for the actual evidence and comparison scope.

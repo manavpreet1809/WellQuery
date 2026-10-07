@@ -1,0 +1,73 @@
+{
+  "label": "DRAFT DEVELOPMENT RESULTS",
+  "created_at": "2026-10-07T22:13:26.522434+00:00",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+  "corpus_sha256": "d3cc33f5925c01a1862ddaf531a8a6e821762f064de8450ea7a5b1f1f906b071",
+  "implementation_sha256": "2f110a8fa90a79aa644f5585cdf4875599ed2132bb5a1850558e5abe4d66c878",
+  "question_count": 12,
+  "verified_question_count": 0,
+  "configurations": {
+    "test/keyword": {
+      "n": 6,
+      "recall_at_5": 0.5,
+      "mrr_at_5": 0.2638888888888889,
+      "p95_ms": 4.57
+    },
+    "test/vector": {
+      "n": 6,
+      "recall_at_5": 0.6666666666666666,
+      "mrr_at_5": 0.5833333333333334,
+      "p95_ms": 2018.09
+    },
+    "test/hybrid": {
+      "n": 6,
+      "recall_at_5": 0.6666666666666666,
+      "mrr_at_5": 0.4166666666666667,
+      "p95_ms": 18.89
+    },
+    "test/hybrid+routing": {
+      "n": 6,
+      "recall_at_5": 0.6666666666666666,
+      "mrr_at_5": 0.4166666666666667,
+      "p95_ms": 18.88
+    }
+  },
+  "limitations": [
+    "Question verification does not establish answer correctness.",
+    "Exact support quotes do not establish semantic entailment.",
+    "First vector request may include model loading; timings are not controlled benchmarks.",
+    "Results from this narrow corpus do not establish clinical safety."
+  ],
+  "git_sha": "a118af4dc32036de98c561c499433ab14d965e03",
+  "working_tree_dirty": true,
+  "behaviour_checks": {
+    "answer": {
+      "n": 6,
+      "match_rate": 1
+    },
+    "emergency": {
+      "n": 2,
+      "match_rate": 1
+    },
+    "injection": {
+      "n": 1,
+      "match_rate": 1
+    },
+    "insufficient_evidence": {
+      "n": 2,
+      "match_rate": 1
+    },
+    "personal_advice": {
+      "n": 1,
+      "match_rate": 1
+    }
+  },
+  "rule_route_accuracy": 0.75,
+  "failure_counts": {
+    "retrieval_miss": 9,
+    "behaviour_mismatch": 0,
+    "route_mismatch": 3
+  },
+  "questions_sha256": "d29adcd3a9914e072a6cc6e6d4f72b9ed2168b8bd2d78153c87c397c43e204a8"
+}

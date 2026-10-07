@@ -69,3 +69,14 @@ The summary reports counts and coverage; it never converts unreviewed answers in
 Every new run also writes `failures.jsonl`: incomplete section retrieval per configuration, behavior mismatches, and route mismatches. Counts are events, not unique failed questions. A retrieval-only run has no behavior judgments. Human answer-review fields remain blank.
 
 The October 7 draft run against 15 sources/201 chunks produced 7 retrieval-miss events, 6 behavior mismatches, and 9 route mismatches. It missed unfamiliar urgent phrasing, personal-dose and injection requests, answered a laptop question containing “diabetes,” and falsely blocked a negated chest-pain question. These are known prototype limitations. No rule changes were fitted to this set; future improvements need separate evaluation cases. Historical three-source scores are not expanded-corpus scores.
+
+### Final release evaluation
+
+`final_questions.jsonl` adds 12 AI-authored, unverified questions after the final boundary/excerpt changes. It was evaluated once and not used to tune retrieval. Its small size and shared authorship limit independence; it is not a human-validated benchmark. The original 80 cases are regression sets because they guided fixes.
+
+```sh
+.venv/bin/python -m evaluation.run --questions evaluation/final_questions.jsonl --include-drafts
+make compare
+```
+
+The final 60-, 20-, and 12-case runs match expected answer/refusal categories. This is not answer accuracy. Supplementary factual retrieval is 4/6 for hybrid Recall@5. Summary files, retrieval CSVs, and failures are preserved in `docs/results/`; REPORT.md explains the scope. The comparison runs an unchanged MediBot prompt against the same local model/context and leaves human judgment fields empty. It does not replay Databricks or the original generation model.

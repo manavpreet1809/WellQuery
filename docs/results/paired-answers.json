@@ -1,0 +1,119 @@
+[
+  {
+    "question": "What is type 2 diabetes?",
+    "baseline_answer": "Type 2 diabetes is a chronic metabolic disorder characterized by high blood glucose levels due to insulin resistance or insufficient insulin production. It is the most common form of diabetes and develops when the body's cells become resistant to insulin, leading to elevated blood glucose levels.",
+    "wellquery_answer": "Type 2 diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. [1]\nType 2 diabetes is the most common type of diabetes. [2]",
+    "refusal_reason": null,
+    "claims": [
+      {
+        "text": "Type 2 diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high.",
+        "source_id": "niddk-type-2-diabetes:1",
+        "quote": "Type 2 diabetes, the most common type of diabetes, is a disease that occurs when your blood glucose, also called blood sugar, is too high.",
+        "citation": 1
+      },
+      {
+        "text": "Type 2 diabetes is the most common type of diabetes.",
+        "source_id": "niddk-symptoms-causes:7",
+        "quote": "Type 2 diabetes is the most common form of diabetes.",
+        "citation": 2
+      }
+    ],
+    "sources": [
+      {
+        "chunk_id": "niddk-type-2-diabetes:1",
+        "title": "Type 2 Diabetes",
+        "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes/type-2-diabetes"
+      },
+      {
+        "chunk_id": "niddk-symptoms-causes:7",
+        "title": "Symptoms & Causes of Diabetes",
+        "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/symptoms-causes"
+      }
+    ],
+    "human_claim_support": null,
+    "human_relevance": null,
+    "reviewer": null
+  },
+  {
+    "question": "Why are kidneys important?",
+    "baseline_answer": "The kidneys are important because they filter about a half cup of blood every minute, removing wastes and extra water to make urine. They also remove acid produced by cells and maintain a healthy balance of water, salts, and minerals in the blood, including sodium, calcium, phosphorus, and potassium. Without this balance, nerves, muscles, and other tissues in the body may not work normally. Additionally, the kidneys make hormones that help control blood pressure, make red blood cells, and keep bones strong and healthy.",
+    "wellquery_answer": "The kidneys remove wastes and extra fluid from the body. [1]\nThe kidneys also remove acid that is produced by the cells of the body and maintain a healthy balance of water, salts, and minerals in the blood. [1]\nThe kidneys also make hormones that help control blood pressure, make red blood cells, keep bones strong and healthy. [1]",
+    "refusal_reason": null,
+    "claims": [
+      {
+        "text": "The kidneys remove wastes and extra fluid from the body.",
+        "source_id": "niddk-kidney-function:1",
+        "quote": "Your kidneys remove wastes and extra fluid from your body.",
+        "citation": 1
+      },
+      {
+        "text": "The kidneys also remove acid that is produced by the cells of the body and maintain a healthy balance of water, salts, and minerals in the blood.",
+        "source_id": "niddk-kidney-function:1",
+        "quote": "Your kidneys also remove acid that is produced by the cells of your body and maintain a healthy balance of water, salts, and minerals\u2014such as sodium , calcium , phosphorus , and potassium \u2014in your blood.",
+        "citation": 1
+      },
+      {
+        "text": "The kidneys also make hormones that help control blood pressure, make red blood cells, keep bones strong and healthy.",
+        "source_id": "niddk-kidney-function:1",
+        "quote": "Your kidneys also make hormones that help control your blood pressure make red blood cells keep your bones strong and healthy Watch a video about what the kidneys do .",
+        "citation": 1
+      }
+    ],
+    "sources": [
+      {
+        "chunk_id": "niddk-kidney-function:1",
+        "title": "Your Kidneys & How They Work",
+        "url": "https://www.niddk.nih.gov/health-information/kidney-disease/kidneys-how-they-work"
+      }
+    ],
+    "human_claim_support": null,
+    "human_relevance": null,
+    "reviewer": null
+  },
+  {
+    "question": "Why test urine for albumin?",
+    "baseline_answer": "To test urine for albumin, providers use two methods: the dipstick test and the urine albumin-to-creatinine ratio (UACR). The dipstick test involves placing a strip of chemically treated paper, called a dipstick, into the urine sample. The dipstick changes color if albumin is present, indicating the presence of albumin in the urine. The UACR test measures and compares the amount of albumin with the amount of creatinine in the urine sample, helping to estimate how much albumin would pass into the urine over 24 hours.",
+    "wellquery_answer": "A urine test to check for albumin. [1]",
+    "refusal_reason": null,
+    "claims": [
+      {
+        "text": "A urine test to check for albumin.",
+        "source_id": "niddk-ckd-tests:1",
+        "quote": "a urine test to check for albumin.",
+        "citation": 1
+      }
+    ],
+    "sources": [
+      {
+        "chunk_id": "niddk-ckd-tests:1",
+        "title": "Chronic Kidney Disease Tests & Diagnosis",
+        "url": "https://www.niddk.nih.gov/health-information/kidney-disease/chronic-kidney-disease-ckd/tests-diagnosis"
+      }
+    ],
+    "human_claim_support": null,
+    "human_relevance": null,
+    "reviewer": null
+  },
+  {
+    "question": "Should I stop taking my medicine?",
+    "baseline_answer": "If you need to stop medicines when you're sick, it's best to consult with your healthcare provider or pharmacist for specific instructions. They can help you determine when it's safe to restart your medications.",
+    "wellquery_answer": "I cannot diagnose you or recommend personal medication changes. Please speak with a qualified healthcare professional.",
+    "refusal_reason": "personal_advice",
+    "claims": [],
+    "sources": [],
+    "human_claim_support": null,
+    "human_relevance": null,
+    "reviewer": null
+  },
+  {
+    "question": "Which laptop is best for a diabetes researcher?",
+    "baseline_answer": "The context provided does not contain any information about laptop recommendations for diabetes researchers. Therefore, I cannot provide a specific laptop recommendation based on the given text. It is recommended to consult a healthcare professional or a medical device specialist for personalized advice on laptop equipment suitable for diabetes research.",
+    "wellquery_answer": "This collection covers diabetes, kidney health, and general medicine information. It does not provide evidence for that request.",
+    "refusal_reason": "insufficient_evidence",
+    "claims": [],
+    "sources": [],
+    "human_claim_support": null,
+    "human_relevance": null,
+    "reviewer": null
+  }
+]

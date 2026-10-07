@@ -92,3 +92,11 @@ Added 20 unverified development cases and machine-readable failure reports. The 
 Added `make model-status` for installed-model metadata and `make model-smoke` for an opt-in, fixed-question generation probe. The shared local adapter disables redirects, bounds generation tokens and request timeouts, and rejects incomplete/malformed responses before citation validation. Readiness does not download or install models.
 
 Verification: 87 tests pass, including HTTP contract, missing configuration, unavailable service, redirect, and malformed generation cases. The real 201-chunk excerpt smoke test passes. The readiness command correctly reports `model_not_configured` here; live Ollama synthesis remains unverified. One upstream Starlette/AnyIO deprecation warning remains.
+
+## Local release — boundary fixes, live synthesis, and final report
+
+Addressed the observed urgent-phrase, personal-dose, injection, out-of-topic, negation, and excerpt-rejection failures with regression tests. Added a small supplementary evaluation without tuning to its retrieval misses. The original 60, challenge 20, and supplementary 12 draft cases all match expected answer/refusal categories; supplementary hybrid retrieval remains 4/6.
+
+Installed a checksum-verified official Ollama runtime and Qwen2.5 1.5B in ignored local storage. Actual generation exposed truncated output and inaccurate quote copying. The adapter now constrains claims to immutable sentence IDs and maps support quotes on the server. The live probe, three factual comparison answers, and browser citation inspection pass. Two comparison requests are refused before generation. This is a controlled prompt comparison, not an original Databricks deployment benchmark.
+
+Added automated-test CI, model-server commands, final report, result exports, demonstration screenshot, and presentation outline. Human review remains explicitly blank and must be completed by a real reviewer.

@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-10-07T22:13:41.587181+00:00",
+  "model": {
+    "ready": true,
+    "reason": "installed",
+    "model": "qwen2.5:1.5b",
+    "digest": "65ec06548149b04c096a120e4a6da9d4017ea809c91734ea5631e89f96ddc57b",
+    "detail": "Model is installed. A separate live check is required to verify valid synthesis."
+  },
+  "corpus_sha256": "d3cc33f5925c01a1862ddaf531a8a6e821762f064de8450ea7a5b1f1f906b071",
+  "baseline_prompt_sha256": "1b4e4ff49cc27f81bc729ffca183e5f5156f1b9dad82f4e104e21e86bd9d4828",
+  "questions": 5,
+  "accepted_synthesis": 3,
+  "guarded_requests": 2,
+  "human_reviewed": 0,
+  "scope": "Same local model and WellQuery retrieval for both prompts. Original MediBot Databricks classifier/retriever and original Llama model are NOT replayed. No comparative accuracy score is inferred."
+}

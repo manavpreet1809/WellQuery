@@ -1,0 +1,44 @@
+{"kind": "retrieval_miss", "id": "q001", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 3.99}
+{"kind": "retrieval_miss", "id": "q002", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.07}
+{"kind": "retrieval_miss", "id": "q003", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.17}
+{"kind": "retrieval_miss", "id": "q005", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.04}
+{"kind": "retrieval_miss", "id": "q006", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.06}
+{"kind": "retrieval_miss", "id": "q007", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.02}
+{"kind": "retrieval_miss", "id": "q008", "split": "test", "verified": false, "configuration": "vector", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 17.3}
+{"kind": "retrieval_miss", "id": "q011", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 3.98}
+{"kind": "retrieval_miss", "id": "q011", "split": "development", "verified": false, "configuration": "hybrid+routing", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 16.68}
+{"kind": "retrieval_miss", "id": "q013", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.57}
+{"kind": "retrieval_miss", "id": "q014", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.06}
+{"kind": "retrieval_miss", "id": "q015", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.13}
+{"kind": "retrieval_miss", "id": "q016", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.34}
+{"kind": "retrieval_miss", "id": "q021", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 3.98}
+{"kind": "retrieval_miss", "id": "q022", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.11}
+{"kind": "retrieval_miss", "id": "q026", "split": "test", "verified": false, "configuration": "hybrid+routing", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 17.21}
+{"kind": "retrieval_miss", "id": "q032", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.05}
+{"kind": "retrieval_miss", "id": "q032", "split": "test", "verified": false, "configuration": "vector", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 15.33}
+{"kind": "retrieval_miss", "id": "q035", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.08}
+{"kind": "retrieval_miss", "id": "q035", "split": "development", "verified": false, "configuration": "vector", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 15.02}
+{"kind": "retrieval_miss", "id": "q036", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 3.98}
+{"kind": "retrieval_miss", "id": "q036", "split": "development", "verified": false, "configuration": "vector", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 15.1}
+{"kind": "retrieval_miss", "id": "q036", "split": "development", "verified": false, "configuration": "hybrid", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 17.24}
+{"kind": "retrieval_miss", "id": "q036", "split": "development", "verified": false, "configuration": "hybrid+routing", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 17.28}
+{"kind": "route_mismatch", "id": "q001", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q003", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q006", "expected": "condition", "actual": "all"}
+{"kind": "route_mismatch", "id": "q007", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q009", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q011", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q021", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q022", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q023", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q025", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q026", "expected": "all", "actual": "drug"}
+{"kind": "route_mismatch", "id": "q027", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q028", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q029", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q030", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q031", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q033", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q034", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q035", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "q036", "expected": "all", "actual": "condition"}

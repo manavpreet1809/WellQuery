@@ -2,7 +2,7 @@
 
 A third-year university project that explores general health information through document search, cited source excerpts, and inspectable evidence. Built by Manavpreet Singh on his earlier MediBot project.
 
-**Current status:** the local excerpt demo, hybrid search, evidence interface, and evaluation dashboard work. Optional Ollama synthesis is integrated but not verified against a live model. The starter corpus has 15 diabetes/kidney-health articles and 201 chunks. All 80 evaluation questions (60 original and 20 challenge cases) are still drafts awaiting human review. This is an independent student prototype, not medical advice or a clinically validated system.
+**Current status:** the local application works with source excerpts and live-tested Ollama synthesis. The corpus contains 15 diabetes/kidney-health articles and 201 chunks. All 92 evaluation questions remain unverified drafts. The original/challenge/supplementary sets match their expected answer/refusal categories, but this does not establish answer correctness. See the [final report](docs/REPORT.md), [results](docs/results/), and [completion scope](docs/STATUS.md).
 
 ## Run the local demo
 
@@ -49,7 +49,7 @@ After changing source documents, rerun ingestion and index creation. Vector sear
 
 ## Optional model synthesis and original MediBot mode
 
-To enable synthesis, run Ollama locally with a model you have separately installed and set `OLLAMA_MODEL` in `.env`. Start `make local`, select **AI synthesis**, and inspect its support quotes. This mode calls the local [Ollama chat API](https://docs.ollama.com/api/chat). Without the model/service it reports unavailability; it does not silently substitute generated-looking excerpts. Run `make model-status` to inspect installed-model metadata without generating text, then `make model-smoke` for a fixed-question live synthesis probe. Both return a nonzero exit code when unavailable or unsuccessful. Metadata readiness alone does not demonstrate valid generation. The metadata check uses the [Ollama model listing API](https://docs.ollama.com/api/tags). No live Ollama test has been completed here.
+To enable synthesis, run Ollama locally with a model you have separately installed and set `OLLAMA_MODEL` in `.env`. Start `make local`, select **AI synthesis**, and inspect its support quotes. This mode calls the local [Ollama chat API](https://docs.ollama.com/api/chat). Without the model/service it reports unavailability; it does not silently substitute generated-looking excerpts. Run `make model-status` to inspect installed-model metadata without generating text, then `make model-smoke` for a fixed-question live synthesis probe. Both return a nonzero exit code when unavailable or unsuccessful. Metadata readiness alone does not demonstrate valid generation. The metadata check uses the [Ollama model listing API](https://docs.ollama.com/api/tags). Live generation and browser evidence inspection passed with Qwen2.5 1.5B on October 7, 2026. This is a mechanical integration check, not a medical-quality review.
 
 The original `BACKEND_MODE=databricks` flow is retained for comparison and requires your serving endpoints and the original local generation dependencies in `requirements-llm.txt`. Those legacy pins should be tested in a **separate environment**, not mixed into the tested demo snapshot. Databricks inference remains unverified; the new local safeguards are not applied to the legacy flow. See `.env.example` and [provenance](ATTRIBUTION.md).
 
@@ -67,3 +67,19 @@ The 15-article collection covers diabetes, kidney health, and two medication-inf
 - [Original scope](PROJECT_SCOPE.md) and [commit history notes](docs/PROGRESS.md)
 
 The final submission still needs human question/answer review, live synthesis validation if synthesis is presented as a working feature.
+
+
+### Run local synthesis
+
+Install [Ollama from its official source](https://docs.ollama.com/macos). On this development machine, a verified runtime is already in ignored `data/models/ollama-runtime/`; `make model-serve` detects it. Other installations use `ollama` from PATH.
+
+1. In a terminal, run `make model-serve` (leave it running).
+2. In another terminal, run `make model-pull` once to download [Qwen2.5 1.5B](https://ollama.com/library/qwen2.5:1.5b), approximately 986 MB.
+3. Set `OLLAMA_MODEL=qwen2.5:1.5b` in your local `.env` (already set on this machine).
+4. Run `make model-smoke`, then `make local`, and choose **AI synthesis**.
+
+`make model-serve` stores models under ignored `data/models/ollama`. If another Ollama server already owns port 11434, use that server or stop it before starting this one; do not run two servers on the same port. Stop local servers with Ctrl+C after your demo. Model downloads and runtime binaries are not committed.
+
+For the controlled MediBot-prompt comparison, use `make compare`. This compares prompt handling with the same local model, not the original remote deployment. Read [the comparison methodology](docs/REPORT.md#controlled-medibot-prompt-comparison) before interpreting the outputs.
+
+![Live local synthesis with source evidence](docs/images/live-synthesis.png)

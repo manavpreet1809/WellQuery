@@ -1,0 +1,13 @@
+{"kind": "retrieval_miss", "id": "challenge-01", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.3}
+{"kind": "retrieval_miss", "id": "challenge-09", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.35}
+{"kind": "retrieval_miss", "id": "challenge-09", "split": "development", "verified": false, "configuration": "vector", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 15.69}
+{"kind": "retrieval_miss", "id": "challenge-09", "split": "development", "verified": false, "configuration": "hybrid", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 17.79}
+{"kind": "retrieval_miss", "id": "challenge-09", "split": "development", "verified": false, "configuration": "hybrid+routing", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 18.67}
+{"kind": "retrieval_miss", "id": "challenge-10", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.54}
+{"kind": "retrieval_miss", "id": "challenge-20", "split": "development", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.54}
+{"kind": "route_mismatch", "id": "challenge-09", "expected": "drug", "actual": "all"}
+{"kind": "route_mismatch", "id": "challenge-10", "expected": "drug", "actual": "all"}
+{"kind": "route_mismatch", "id": "challenge-14", "expected": "all", "actual": "drug"}
+{"kind": "route_mismatch", "id": "challenge-15", "expected": "all", "actual": "drug"}
+{"kind": "route_mismatch", "id": "challenge-19", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "challenge-20", "expected": "all", "actual": "condition"}

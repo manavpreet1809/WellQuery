@@ -28,7 +28,7 @@ flowchart TD
 - **Pinned embedding revision and corpus fingerprint:** document changes invalidate the persisted vector snapshot. The model is explicitly downloaded during index setup; ordinary searches use local files.
 - **Rule routing:** a transparent local comparison baseline. Drug/condition/mixed cues are not a trained classifier or an out-of-scope detector. No trained local MediBot classifier artifacts were supplied.
 - **Excerpts by default:** supports a working demo without another model service. Source wording and citations can be inspected directly, though passage selection can still be irrelevant or incomplete.
-- **Optional synthesis:** local Ollama receives the question and evidence. JSON claims must cite evidence IDs and quote exact support text. This validates provenance structure, not claim entailment. It must be evaluated independently before quality claims.
+- **Optional synthesis:** local Ollama receives the question and evidence. JSON claims select immutable sentence IDs; the server maps them to source IDs and exact quotes. This validates provenance structure, not claim entailment. It must be evaluated independently before quality claims.
 - **Evaluation as data:** JSON/CSV artifacts keep metrics reproducible and inspectable. Review packets guard against accidentally applying decisions to changed questions. Reviewer identity is self-attributed, not authenticated.
 
 ## Boundaries

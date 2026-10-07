@@ -1,0 +1,12 @@
+{"kind": "retrieval_miss", "id": "final-02", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.39}
+{"kind": "retrieval_miss", "id": "final-03", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.45}
+{"kind": "retrieval_miss", "id": "final-03", "split": "test", "verified": false, "configuration": "vector", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 20.99}
+{"kind": "retrieval_miss", "id": "final-03", "split": "test", "verified": false, "configuration": "hybrid", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 18.89}
+{"kind": "retrieval_miss", "id": "final-03", "split": "test", "verified": false, "configuration": "hybrid+routing", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 18.59}
+{"kind": "retrieval_miss", "id": "final-04", "split": "test", "verified": false, "configuration": "vector", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 19.5}
+{"kind": "retrieval_miss", "id": "final-04", "split": "test", "verified": false, "configuration": "hybrid", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 18.24}
+{"kind": "retrieval_miss", "id": "final-04", "split": "test", "verified": false, "configuration": "hybrid+routing", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 18.31}
+{"kind": "retrieval_miss", "id": "final-05", "split": "test", "verified": false, "configuration": "keyword", "recall_at_5": 0.0, "reciprocal_rank_at_5": 0, "latency_ms": 4.45}
+{"kind": "route_mismatch", "id": "final-08", "expected": "all", "actual": "drug"}
+{"kind": "route_mismatch", "id": "final-10", "expected": "all", "actual": "condition"}
+{"kind": "route_mismatch", "id": "final-11", "expected": "all", "actual": "condition"}
