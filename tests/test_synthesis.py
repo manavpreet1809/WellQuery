@@ -43,7 +43,7 @@ def test_missing_configuration_never_connects(monkeypatch):
     monkeypatch.setattr('app.synthesis.selected_model',lambda:'')
     def forbidden(*a,**k):pytest.fail('Unexpected network call')
     assert model_status(forbidden)['reason']=='model_not_configured'
-    with pytest.raises(RuntimeError):request_claims('question',[],forbidden)
+    with pytest.raises(RuntimeError):request_claims('question',[dict(chunk_id='a',text='A useful evidence sentence.')],forbidden)
 
 
 def test_request_contract():
@@ -54,17 +54,26 @@ def test_request_contract():
         assert kwargs['json']['stream'] is False
         assert kwargs['json']['options']['num_predict']==768
         return response({'done':True,'message':{'content':json.dumps({'claims':[]})}})
-    assert request_claims('question',[],post)=={'claims':[]}
+    assert request_claims('question',[dict(chunk_id='a',text='A useful evidence sentence.')],post)=={'claims':[]}
 
 
 @pytest.mark.parametrize('payload',[
-    {'done':False},[],{'done':True,'message':None},
+    {'done':False},{'done':True,'done_reason':'length'},[],{'done':True,'message':None},
     {'done':True,'message':{'content':'not JSON'}},
     {'done':True,'message':{'content':'[]'}},
     {'done':True,'message':{'content':'x'*20001}}])
 def test_malformed_generation_rejected(payload):
-    with pytest.raises(ValueError):request_claims('question',[],lambda *a,**k:response(payload))
+    with pytest.raises(ValueError):request_claims('question',[dict(chunk_id='a',text='A useful evidence sentence.')],lambda *a,**k:response(payload))
 
 
 def test_redirect_rejected():
-    with pytest.raises(RuntimeError):request_claims('question',[],lambda *a,**k:response({},302))
+    with pytest.raises(RuntimeError):request_claims('question',[dict(chunk_id='a',text='A useful evidence sentence.')],lambda *a,**k:response({},302))
+
+
+def test_evidence_ids_map_to_exact_server_quotes():
+    payload={'done':True,'message':{'content':json.dumps({'claims':[{'text':'Supported fact','evidence_id':'E1'}]})}}
+    result=request_claims('question',[dict(chunk_id='source',text='An exact supporting sentence.')],lambda *a,**k:response(payload))
+    assert result['claims']==[dict(text='Supported fact',source_id='source',quote='An exact supporting sentence.')]
+    payload['message']['content']=json.dumps({'claims':[{'text':'Fact','evidence_id':'invented'}]})
+    with pytest.raises(ValueError,match='Unknown evidence'):
+        request_claims('question',[dict(chunk_id='source',text='An exact supporting sentence.')],lambda *a,**k:response(payload))

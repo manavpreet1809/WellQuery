@@ -26,3 +26,11 @@ model-status:
 	$(PYTHON) -m app.synthesis
 model-smoke:
 	$(PYTHON) -m app.synthesis --live
+OLLAMA_BIN := $(if $(wildcard data/models/ollama-runtime/ollama),data/models/ollama-runtime/ollama,ollama)
+.PHONY: model-serve model-pull compare
+model-serve:
+	OLLAMA_MODELS="$(CURDIR)/data/models/ollama" OLLAMA_HOST=127.0.0.1:11434 $(OLLAMA_BIN) serve
+model-pull:
+	$(OLLAMA_BIN) pull qwen2.5:1.5b
+compare:
+	$(PYTHON) -m evaluation.compare --output evaluation/results/comparison-$$(date -u +%Y%m%dT%H%M%SZ)
