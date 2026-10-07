@@ -1,6 +1,10 @@
 const form = document.querySelector('#question-form');
 const input = document.querySelector('#question');
-const button = form.querySelector('button');
+const button = form.querySelector('button[type=submit]');
+const welcome = document.querySelector('#welcome');
+const evidenceList = document.querySelector('#evidence-list');
+const evidenceEmpty = document.querySelector('#evidence-empty');
+const resetButton = document.querySelector('#new-session');
 const status = document.querySelector('#status');
 const messages = document.querySelector('#messages');
 let responseNumber = 0;
@@ -45,6 +49,9 @@ function renderAnswer(data) {
       section.append(p);
     }
   } else section.append(element('p', data.answer));
+  const evidenceGroup = element('section', undefined, 'evidence-group');
+  evidenceGroup.append(element('h3', `ANSWER ${String(responseNumber).padStart(2, '0')} / SOURCES`));
+  if (!data.citations?.length) evidenceGroup.append(element('p', 'No supporting sources for this response.', 'evidence-empty-response'));
   for (const citation of data.citations || []) {
     const details = element('details');
     details.id = `evidence-${responseNumber}-${citation.n}`;
@@ -57,17 +64,24 @@ function renderAnswer(data) {
     }
     const quotes = (data.claims || []).filter(c => c.citation === citation.n);
     for (const claim of quotes) details.append(element('blockquote', claim.quote));
-    details.append(element('p', citation.text, 'passage'));
+    const passage = element('details', undefined, 'full-passage');
+    passage.append(element('summary', 'Full retrieved passage'));
+    passage.append(element('p', citation.text, 'passage'));
+    details.append(passage);
     details.append(element('small', citation.licence || ''));
-    section.append(details);
+    evidenceGroup.append(details);
   }
   section.append(element('p', `${data.chunks_used} supporting passages · ${Math.round(data.latency_ms || 0)} ms server time`, 'source-meta'));
   messages.append(section);
+  evidenceEmpty.hidden = true;
+  evidenceList.append(evidenceGroup);
 }
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const question = input.value.trim();
   if (!question || button.disabled) return;
+  welcome.hidden = true;
+  resetButton.disabled = true;
   button.disabled = true; form.setAttribute('aria-busy', 'true');
   status.textContent = 'Finding evidence…';
   addMessage('You', question);
@@ -88,6 +102,23 @@ form.addEventListener('submit', async (event) => {
   } catch (error) {
     status.textContent = error.name === 'AbortError' ? 'Request timed out. Please try again.' : error.message;
   } finally {
-    clearTimeout(timer); button.disabled = false; form.setAttribute('aria-busy', 'false'); input.focus();
+    clearTimeout(timer); button.disabled = false; resetButton.disabled = false; form.setAttribute('aria-busy', 'false'); input.focus();
   }
+});
+
+for (const suggestion of document.querySelectorAll('[data-question]')) {
+  suggestion.addEventListener('click', () => {
+    input.value = suggestion.dataset.question;
+    input.focus();
+    input.scrollIntoView({block: 'center', behavior: 'auto'});
+  });
+}
+resetButton.addEventListener('click', () => {
+  if (button.disabled) return;
+  messages.replaceChildren();
+  evidenceList.replaceChildren();
+  welcome.hidden = false; evidenceEmpty.hidden = false;
+  responseNumber = 0; input.value = ''; status.textContent = '';
+  history.replaceState(null, '', location.pathname);
+  input.focus();
 });

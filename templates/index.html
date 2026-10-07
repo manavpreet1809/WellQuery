@@ -1,11 +1,31 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WellQuery</title><link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}"></head>
-<body><main><nav><a href="/evaluation">Evaluation results</a></nav><h1>WellQuery</h1><p>Explore information. Check the evidence.</p>
-<p class="notice">Student prototype. General information only; not medical advice. Do not enter personal health details. For an emergency, contact local emergency services.</p>
-<p id="mode">Mode: {{ mode }}.{% if mode == 'demo' %} Scripted demo — try “What is WellQuery?”. No health information or AI generation is active.{% elif mode == 'local' %} Local evidence answers. Excerpts are direct source text; optional AI synthesis requires Ollama.{% else %} Requires configured Databricks endpoints and a local model.{% endif %}</p>
+<meta name="theme-color" content="#183f38"><title>WellQuery — The evidence workspace</title>
+<link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}?v=3"></head>
+<body class="workspace"><a class="skip-link" href="#question">Skip to question</a>
+<div class="app-shell">
+<aside class="sidebar" aria-label="Workspace navigation">
+<a class="brand" href="/" aria-label="WellQuery home"><span class="brand-mark" aria-hidden="true">w<span>q</span></span><span>WellQuery<small>THE EVIDENCE WORKSPACE</small></span></a>
+<button type="button" id="new-session" class="new-session"><span aria-hidden="true">＋</span> New exploration</button>
+<nav class="workspace-nav"><span class="eyebrow">YOUR WORKSPACE</span><a class="active" href="/" aria-current="page"><span aria-hidden="true">⌁</span> Explore</a><a href="/evaluation"><span aria-hidden="true">▥</span> Evaluation results <span aria-hidden="true">↗</span></a></nav>
+<div class="collection"><span class="eyebrow">IN THE COLLECTION</span><h2>Small scope.<br>Clearer questions.</h2><p>General information from an attributed document collection.</p><div class="topic-tags"><span>Diabetes</span><span>Kidney health</span><span>Medicines</span></div></div>
+<div class="sidebar-foot"><span class="mini-mark" aria-hidden="true">✳</span><p>An independent student project.<br>Built to make evidence visible.</p><span class="edition">WELLQUERY / FIELD NOTES 01</span></div>
+</aside>
+<main class="explorer" id="main-content">
+<header class="workspace-header"><span class="breadcrumb">Workspace <span>/</span> Explore</span><span class="mode-badge"><i aria-hidden="true"></i>{{ 'Local workspace' if mode == 'local' else 'Scripted demo' if mode == 'demo' else 'Remote workspace' }}</span></header>
+<section id="welcome" class="welcome" aria-labelledby="welcome-title">
+<div class="hero-top"><span class="eyebrow">CURIOSITY, WITH A PAPER TRAIL</span><span class="issue">01 — EXPLORE</span></div>
+<h1 id="welcome-title">A little clarity.<br><em>Backed by evidence.</em></h1>
+<p class="hero-copy">Ask a health-information question.<br>Follow the answer back to its source.</p>
+<div class="specimen" aria-hidden="true"><svg viewBox="0 0 460 120" fill="none"><path d="M0 97H460M30 0V120M430 0V120" stroke="currentColor" opacity=".15"/><ellipse cx="230" cy="59" rx="83" ry="42" stroke="currentColor"/><ellipse cx="230" cy="59" rx="58" ry="42" stroke="currentColor"/><ellipse cx="230" cy="59" rx="25" ry="42" stroke="currentColor"/><path d="M147 59H313M230 17V101M30 59H124M336 59H430" stroke="currentColor"/><circle cx="230" cy="59" r="7" fill="#c26943"/><circle cx="30" cy="59" r="3" fill="currentColor"/><circle cx="430" cy="59" r="3" fill="currentColor"/></svg><div><span>QUESTION</span><span>EVIDENCE</span><span>UNDERSTANDING</span></div></div>
+<div class="suggestion-header"><span class="eyebrow">A PLACE TO START</span><span>Choose a question below ↘</span></div>
+<div class="suggestions">{% if mode == 'demo' %}<button type="button" class="suggestion" data-question="What is WellQuery?"><span>01 / THE PROJECT</span><strong>What is WellQuery?</strong><b aria-hidden="true">↗</b></button>{% else %}<button type="button" class="suggestion" data-question="What is type 2 diabetes?"><span>01 / DIABETES</span><strong>What is type 2 diabetes?</strong><b aria-hidden="true">↗</b></button><button type="button" class="suggestion" data-question="Why are kidneys important?"><span>02 / KIDNEY HEALTH</span><strong>Why are kidneys important?</strong><b aria-hidden="true">↗</b></button><button type="button" class="suggestion" data-question="Why test urine for albumin?"><span>03 / UNDERSTANDING TESTS</span><strong>Why test urine for albumin?</strong><b aria-hidden="true">↗</b></button>{% endif %}</div>
+</section>
 <section id="messages" role="log" aria-live="polite" aria-label="Conversation"></section>
-<form id="question-form"><label for="question">Your question</label><textarea id="question" maxlength="1000" required rows="3"></textarea>
-{% if mode == 'local' %}<label for="answer-style">Answer style</label><select id="answer-style"><option value="excerpts">Source excerpts (no generation)</option><option value="ollama">AI synthesis (requires local Ollama)</option></select>{% endif %}
-<button type="submit">Ask WellQuery</button><p id="status" role="status"></p></form>
-</main><script src="{{ request.url_for('static', path='chat.js') }}" defer></script></body></html>
+<div class="composer-wrap"><form id="question-form"><label for="question">What would you like to understand?</label><textarea id="question" maxlength="1000" required rows="2" placeholder="Ask a general question about the collection…"></textarea><div class="composer-controls">{% if mode == 'local' %}<div class="style-control"><label for="answer-style">Answer style</label><select id="answer-style" aria-label="Answer style"><option value="excerpts">Source excerpts</option><option value="ollama">AI synthesis · local model</option></select></div>{% else %}<span class="source-meta">{{ 'Scripted interface demo' if mode == 'demo' else 'Remote backend' }}</span>{% endif %}<button type="submit" class="ask-button">Explore <span aria-hidden="true">↗</span></button></div><p id="status" role="status"></p></form><p class="composer-note">General information, not medical advice. Please leave out personal health details.</p></div>
+</main>
+<aside class="evidence-rail" aria-labelledby="evidence-title"><div class="rail-heading"><span class="eyebrow">THE PAPER TRAIL</span><h2 id="evidence-title">Behind the answer<span aria-hidden="true">↙</span></h2></div>
+<div id="evidence-empty"><div class="empty-art" aria-hidden="true"><span></span><span></span><span>01<br><i>Source notes</i></span></div><h3>Nothing to take on trust.</h3><p>Sources will appear here when an answer has supporting evidence. Open a citation to inspect the exact passage.</p><ol class="evidence-steps"><li><span>01</span> Ask your question</li><li><span>02</span> Read the answer</li><li><span>03</span> Follow the evidence</li></ol></div>
+<div id="evidence-list" aria-label="Source evidence"></div>
+<div class="scope-note"><span class="eyebrow">A NOTE ON SCOPE</span><p>Source citations show where information came from. They do not establish medical accuracy.</p><p>For an emergency, contact local emergency services.</p><details class="mode-details"><summary>About this workspace</summary><p id="mode">Mode: {{ mode }}. {% if mode == 'local' %}Excerpts are direct source text. AI synthesis uses a local Ollama model.{% elif mode == 'demo' %}Scripted demo only. Health retrieval and generation are not active.{% else %}Requires configured Databricks endpoints and a local model.{% endif %}</p></details></div></aside>
+</div><script src="{{ request.url_for('static', path='chat.js') }}?v=3" defer></script></body></html>

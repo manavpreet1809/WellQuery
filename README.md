@@ -82,4 +82,6 @@ Install [Ollama from its official source](https://docs.ollama.com/macos). On thi
 
 For the controlled MediBot-prompt comparison, use `make compare`. This compares prompt handling with the same local model, not the original remote deployment. Read [the comparison methodology](docs/REPORT.md#controlled-medibot-prompt-comparison) before interpreting the outputs.
 
-![Live local synthesis with source evidence](docs/images/live-synthesis.png)
+![WellQuery evidence workspace](docs/images/workspace-desktop.jpg)
+
+The responsive interface includes suggested questions, a separate source panel, expandable full passages, and a new-exploration control. [Mobile preview](docs/images/workspace-mobile.jpg).
