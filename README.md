@@ -2,7 +2,7 @@
 
 A third-year university project that explores general health information through document search, cited source excerpts, and inspectable evidence. Built by Manavpreet Singh on his earlier MediBot project.
 
-**Current status:** the local excerpt demo, hybrid search, evidence interface, and evaluation dashboard work. Optional Ollama synthesis is integrated but not verified against a live model. The starter corpus has 15 diabetes/kidney-health articles and 201 chunks. All 60 evaluation questions are still drafts awaiting human review. This is an independent student prototype, not medical advice or a clinically validated system.
+**Current status:** the local excerpt demo, hybrid search, evidence interface, and evaluation dashboard work. Optional Ollama synthesis is integrated but not verified against a live model. The starter corpus has 15 diabetes/kidney-health articles and 201 chunks. All 80 evaluation questions (60 original and 20 challenge cases) are still drafts awaiting human review. This is an independent student prototype, not medical advice or a clinically validated system.
 
 ## Run the local demo
 
@@ -49,7 +49,7 @@ After changing source documents, rerun ingestion and index creation. Vector sear
 
 ## Optional model synthesis and original MediBot mode
 
-To enable synthesis, run Ollama locally with a model you have separately installed and set `OLLAMA_MODEL` in `.env`. Start `make local`, select **AI synthesis**, and inspect its support quotes. This mode calls the local [Ollama chat API](https://docs.ollama.com/api/chat). Without the model/service it reports unavailability; it does not silently substitute generated-looking excerpts. No live Ollama test has been completed here.
+To enable synthesis, run Ollama locally with a model you have separately installed and set `OLLAMA_MODEL` in `.env`. Start `make local`, select **AI synthesis**, and inspect its support quotes. This mode calls the local [Ollama chat API](https://docs.ollama.com/api/chat). Without the model/service it reports unavailability; it does not silently substitute generated-looking excerpts. Run `make model-status` to inspect installed-model metadata without generating text, then `make model-smoke` for a fixed-question live synthesis probe. Both return a nonzero exit code when unavailable or unsuccessful. Metadata readiness alone does not demonstrate valid generation. The metadata check uses the [Ollama model listing API](https://docs.ollama.com/api/tags). No live Ollama test has been completed here.
 
 The original `BACKEND_MODE=databricks` flow is retained for comparison and requires your serving endpoints and the original local generation dependencies in `requirements-llm.txt`. Those legacy pins should be tested in a **separate environment**, not mixed into the tested demo snapshot. Databricks inference remains unverified; the new local safeguards are not applied to the legacy flow. See `.env.example` and [provenance](ATTRIBUTION.md).
 

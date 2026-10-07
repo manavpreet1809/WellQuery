@@ -21,3 +21,8 @@ doctor:
 	$(PYTHON) -m app.doctor
 smoke:
 	$(PYTHON) -m app.doctor --smoke
+.PHONY: model-status model-smoke
+model-status:
+	$(PYTHON) -m app.synthesis
+model-smoke:
+	$(PYTHON) -m app.synthesis --live

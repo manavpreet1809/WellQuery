@@ -86,3 +86,9 @@ Live validation: 15 sources ingested into 201 chunks; repeat ingestion changed 0
 ## Follow-up 2 — cross-topic and adversarial evaluation
 
 Added 20 unverified development cases and machine-readable failure reports. The real expanded-corpus run exposed 6/20 behavior mismatches, 7 retrieval-miss events across configurations, and 9 draft route mismatches. This makes failures reviewable; it does not fix them or establish safety. All human review fields remain blank. Verification: 71 tests pass, including preservation of failed retrieval and behavior outcomes.
+
+## Follow-up 3 — explicit local synthesis readiness
+
+Added `make model-status` for installed-model metadata and `make model-smoke` for an opt-in, fixed-question generation probe. The shared local adapter disables redirects, bounds generation tokens and request timeouts, and rejects incomplete/malformed responses before citation validation. Readiness does not download or install models.
+
+Verification: 87 tests pass, including HTTP contract, missing configuration, unavailable service, redirect, and malformed generation cases. The real 201-chunk excerpt smoke test passes. The readiness command correctly reports `model_not_configured` here; live Ollama synthesis remains unverified. One upstream Starlette/AnyIO deprecation warning remains.

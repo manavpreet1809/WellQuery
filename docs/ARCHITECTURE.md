@@ -23,7 +23,7 @@ flowchart TD
 
 ## Decisions and tradeoffs
 
-- **SQLite and exact vector scans:** sufficient for 38 chunks and easy to run locally. This trades large-scale performance for a smaller student-project setup. The original PostgreSQL/Azure plan was intentionally reduced.
+- **SQLite and exact vector scans:** sufficient for 201 chunks and easy to run locally. This trades large-scale performance for a smaller student-project setup. The original PostgreSQL/Azure plan was intentionally reduced.
 - **BM25 + MiniLM + RRF:** distinct methods make a comparison experiment possible. RRF combines ranks rather than incompatible raw score scales. Exact cosine search avoids a separate vector service.
 - **Pinned embedding revision and corpus fingerprint:** document changes invalidate the persisted vector snapshot. The model is explicitly downloaded during index setup; ordinary searches use local files.
 - **Rule routing:** a transparent local comparison baseline. Drug/condition/mixed cues are not a trained classifier or an out-of-scope detector. No trained local MediBot classifier artifacts were supplied.
