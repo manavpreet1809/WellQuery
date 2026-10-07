@@ -2,7 +2,7 @@
 
 A third-year university project that explores general health information through document search, cited source excerpts, and inspectable evidence. Built by Manavpreet Singh on his earlier MediBot project.
 
-**Current status:** the local excerpt demo, hybrid search, evidence interface, and evaluation dashboard work. Optional Ollama synthesis is integrated but not verified against a live model. The starter corpus has 3 diabetes articles and 38 chunks. All 60 evaluation questions are still drafts awaiting human review. This is an independent student prototype, not medical advice or a clinically validated system.
+**Current status:** the local excerpt demo, hybrid search, evidence interface, and evaluation dashboard work. Optional Ollama synthesis is integrated but not verified against a live model. The starter corpus has 15 diabetes/kidney-health articles and 201 chunks. All 60 evaluation questions are still drafts awaiting human review. This is an independent student prototype, not medical advice or a clinically validated system.
 
 ## Run the local demo
 
@@ -57,7 +57,7 @@ The original `BACKEND_MODE=databricks` flow is retained for comparison and requi
 
 Citation validation checks that source IDs exist and quotes match retrieved passages. It does **not** prove that a synthesized claim follows from that quote. Retrieval relevance, answer support, and clinical safety are distinct.
 
-The three-article collection covers conditions, not medications. Local routing is a simple rule baseline; the trained MediBot classifier remains remote. Draft results exposed worse retrieval with routing on one split, so no routing improvement is claimed. Phrase safeguards can miss paraphrases or misread negation, and vector scores are not medical confidence. The app is intended for a local classroom demo, not public clinical use. Avoid entering personal health information; there is no comprehensive PII filter.
+The 15-article collection covers diabetes, kidney health, and two medication-information pages; it is not a comprehensive health or drug reference. Local routing is a simple rule baseline; the trained MediBot classifier remains remote. Draft results exposed worse retrieval with routing on one split, so no routing improvement is claimed. Phrase safeguards can miss paraphrases or misread negation, and vector scores are not medical confidence. The app is intended for a local classroom demo, not public clinical use. Avoid entering personal health information; there is no comprehensive PII filter.
 
 - [Evaluation definitions and human review workflow](evaluation/README.md)
 - [Source permissions and ingestion limitations](data/README.md)
@@ -66,4 +66,4 @@ The three-article collection covers conditions, not medications. Local routing i
 - [Completion checklist](docs/STATUS.md)
 - [Original scope](PROJECT_SCOPE.md) and [commit history notes](docs/PROGRESS.md)
 
-The final submission still needs human question/answer review, broader source coverage, and live synthesis validation if synthesis is presented as a working feature.
+The final submission still needs human question/answer review, live synthesis validation if synthesis is presented as a working feature.

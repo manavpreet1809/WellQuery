@@ -4,7 +4,7 @@
 
 - [x] Imported original MediBot baseline with provenance.
 - [x] Local API startup, request validation, and failure handling.
-- [x] Three-source catalogue, section extraction, chunking, and SQLite persistence.
+- [x] Fifteen-source catalogue, section extraction, chunking, and SQLite persistence.
 - [x] Keyword/vector/hybrid retrieval and local routing baseline.
 - [x] Cited excerpt answers and prototype safeguards.
 - [x] Optional Ollama adapter tested using injected model responses.
@@ -18,7 +18,7 @@
 
 - [ ] Human review of the question labels and exported answer support/relevance.
 - [ ] A fresh held-out set if the current test split is used to guide further changes.
-- [ ] Expand the starter corpus toward the originally planned 15–20 documents, or explicitly revise that scope with the course supervisor.
+- [x] Expand to the planned minimum: 15 catalogued documents across diabetes, kidney health, and medication information.
 - [ ] Live Ollama validation if synthesis is included in the presentation.
 - [ ] Record and review a demo video and align the final report with the course rubric.
 

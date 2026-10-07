@@ -1,6 +1,6 @@
 # Starter document catalogue
 
-`sources.json` contains three NIDDK text articles selected to exercise ingestion. This is a starter collection, not the planned 15–20 document corpus or a balanced medication/condition dataset.
+`sources.json` contains 15 NIDDK text articles: diabetes and kidney-health information, including two medication-information pages. The October 7, 2026 ingestion produced 201 chunks. It meets the original minimum document count but is not a balanced or comprehensive clinical dataset. Original three-source evaluation runs remain historical results and are not comparable to expanded-corpus runs without controlling the corpus fingerprint.
 
 The publisher's [copyright policy](https://www.niddk.nih.gov/copyright), checked October 2, 2026, allows reproduction of most site information with acknowledgement and exceptions for third-party content. The selected articles identify NIDDK as their source. The extractor excludes graphics, logos, tables, and surrounding navigation. This is an independent project, not endorsed by NIDDK; the content must not be used to imply endorsement or recommend specific medical advice. Review permissions again when adding sources.
 
@@ -22,3 +22,7 @@ SQLite is a lightweight interim document store, not a vector index. Chunks use 1
 Re-ingestion replaces changed documents and skips unchanged ones. All documents are prepared before database writes, and changes are committed in one transaction. Removing a catalogue entry does not automatically delete its existing database rows. Use a fresh database when intentionally reducing the corpus.
 
 This store is connected to `/search` for keyword, vector, and hybrid retrieval, but not yet to local generated answers in `/ask`. The default chat mode remains an explicitly scripted demo.
+
+## Expansion review (October 7, 2026)
+
+Twelve additional pages were discovered through NIDDK navigation and reviewed under the publisher copyright policy. Each selected article identifies NIDDK as its source; no separate copyright notice was found in its extracted article text. Graphics and logos remain excluded. One gestational-diabetes navigation page lacked the article selector and was replaced with its linked Definition & Facts article before ingestion succeeded. Every source records its original URL, publisher, permission URL, and review date. All 15 sources ingest successfully; a cached rerun changed zero documents.

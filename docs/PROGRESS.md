@@ -76,3 +76,9 @@ Verification: 67 tests pass, including stale-packet rejection, incomplete decisi
 Added a pinned snapshot of the tested demo/test dependencies, setup/ingest/index/evaluate/local commands, a read-only doctor command, and an opt-in real-model smoke check. Rewrote the README around the current implementation, added architecture tradeoffs, a two-minute demo script, a dashboard screenshot, and an explicit completion checklist.
 
 Verification: the dependency snapshot installed into a separate temporary Python 3.12 environment. All 70 tests and the real 38-chunk cited-excerpt smoke check passed there. JavaScript syntax and Git whitespace checks passed. One upstream Starlette/AnyIO deprecation warning remains. This validates the local excerpt demo on macOS Apple Silicon, not live Ollama/Databricks inference or clinical correctness. Human review, corpus expansion, and a recorded presentation remain outstanding.
+
+## Follow-up 1 — expand the source corpus
+
+Expanded from 3 to 15 attributed NIDDK articles, adding kidney health and two medication-information pages alongside diabetes. Rechecked publisher terms and article identity; excluded media. A navigation-only gestational page was replaced with its linked article after the extractor correctly refused it.
+
+Live validation: 15 sources ingested into 201 chunks; repeat ingestion changed 0 documents. The vector index was rebuilt for the expanded corpus. Earlier evaluation results remain historical and must not be presented as metrics for the new corpus. This meets the source-count target, not a claim of comprehensive topic coverage.
