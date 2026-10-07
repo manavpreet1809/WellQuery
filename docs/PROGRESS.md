@@ -100,9 +100,3 @@ Addressed the observed urgent-phrase, personal-dose, injection, out-of-topic, ne
 Installed a checksum-verified official Ollama runtime and Qwen2.5 1.5B in ignored local storage. Actual generation exposed truncated output and inaccurate quote copying. The adapter now constrains claims to immutable sentence IDs and maps support quotes on the server. The live probe, three factual comparison answers, and browser citation inspection pass. Two comparison requests are refused before generation. This is a controlled prompt comparison, not an original Databricks deployment benchmark.
 
 Added automated-test CI, model-server commands, final report, result exports, demonstration screenshot, and presentation outline. Human review remains explicitly blank and must be completed by a real reviewer.
-
-## Interface redesign — the evidence workspace
-
-Replaced the single-column chat with an editorial paper-and-ink identity: monogram, navigation sidebar, typographic introduction, original vector illustration, suggested-question cards, anchored composer, and a separate evidence rail. Citations retain per-answer targets across the conversation. Full passages expand separately, and New exploration clears both conversation and evidence. The dashboard shares the visual system.
-
-Verified the 1440px desktop and 390px mobile layouts in the browser; the mobile page has no horizontal overflow. Suggested questions, submission, citation expansion, reset, and dashboard navigation work. Reduced-motion preferences and keyboard focus styles are supported; no formal accessibility audit is claimed. All 109 existing tests pass, alongside JavaScript syntax and whitespace checks.
