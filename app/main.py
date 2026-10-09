@@ -1,23 +1,24 @@
-"""WellQuery HTTP API; demo mode works without accounts or model downloads."""
+"""WellQuery API: original Databricks classification/retrieval and Transformers LLaMA."""
 from pathlib import Path
 from typing import Literal
 from fastapi import FastAPI, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from app.config import settings
 from app.rag import NO_EVIDENCE, answer_question
 
 ROOT = Path(__file__).resolve().parents[1]
 
 class AskRequest(BaseModel):
+    model_config = ConfigDict(validate_default=True)
     question: str = Field(min_length=1, max_length=1000)
-    threshold: float = Field(default=0.8, ge=0, le=1, allow_inf_nan=False)
-    top_k: int = Field(default=5, ge=1, le=20)
-    pool_k: int = Field(default=50, ge=1, le=100)
-    answer_style: Literal["excerpts", "ollama"] = "excerpts"
-    max_dist: float = Field(default=0.85, ge=0, le=2, allow_inf_nan=False)
+    threshold: float = Field(default=settings.CLASSIFIER_THRESHOLD, ge=0, le=1, allow_inf_nan=False)
+    top_k: int = Field(default=settings.TOP_K, ge=1, le=20)
+    pool_k: int = Field(default=settings.POOL_K, ge=1, le=100)
+    answer_style: Literal["excerpts", "ollama", "transformers"] | None = None
+    max_dist: float = Field(default=settings.MAX_DIST, ge=0, le=2, allow_inf_nan=False)
 
     @field_validator("question")
     @classmethod
@@ -75,13 +76,17 @@ def create_app(mode: str | None = None, client=None, generate=None, search_datab
 
     @application.get("/health")
     def health():
-        return {"status": "ok", "mode": backend, "remote_inference_verified": False}
+        return {"status": "ok", "mode": backend, "remote_inference_verified": False,
+                "generator": "transformers" if backend == "databricks" else backend,
+                "model": settings.MODEL_NAME if backend == "databricks" else None}
 
     @application.get("/search")
     def search_endpoint(q: str = Query(min_length=1, max_length=1000),
                         mode: Literal["keyword", "vector", "hybrid"] = "hybrid",
-                        k: int = Query(default=5, ge=1, le=20), routing: bool = False):
-        """Return source passages, not generated medical answers."""
+                        k: int = Query(default=settings.TOP_K, ge=1, le=20), routing: bool = False):
+        """Return source passages for the explicitly selected local experiment."""
+        if backend == "databricks":
+            raise HTTPException(404, "Local search is available only in the optional local/demo experiment.")
         from app.search import DATABASE, search_report
         import sqlite3
         try:
@@ -95,12 +100,14 @@ def create_app(mode: str | None = None, client=None, generate=None, search_datab
     @application.post("/ask", response_model=AskResponse)
     def ask(req: AskRequest):
         if backend == "local":
+            if req.answer_style == "transformers":
+                raise HTTPException(422, "Transformers generation requires Databricks mode.")
             from app.answers import answer_local
             from app.search import DATABASE
             import sqlite3
             import requests
             try:
-                return answer_local(req.question, style=req.answer_style,
+                return answer_local(req.question, style=req.answer_style or "excerpts",
                                     database=search_database or DATABASE, embed=search_embed, generate=generate)
             except (RuntimeError, ImportError, OSError, sqlite3.Error, requests.RequestException):
                 raise HTTPException(503, "Local answering unavailable. Check the document index and selected model service.") from None
@@ -113,6 +120,8 @@ def create_app(mode: str | None = None, client=None, generate=None, search_datab
                                 "This is a scripted interface demo; health retrieval and AI generation are not active.")
                                if supported else "Demo mode only answers ‘What is WellQuery?’. " + NO_EVIDENCE,
                         chunks_used=0, chunks=[], refused=not supported, mode=backend)
+        if req.answer_style not in {None, "transformers"}:
+            raise HTTPException(422, "Databricks mode uses Transformers LLaMA generation.")
         try:
             active_client = client
             if active_client is None:

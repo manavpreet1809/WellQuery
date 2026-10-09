@@ -1,8 +1,9 @@
 PYTHON := .venv/bin/python
+LOCAL_PYTHON := .venv-local/bin/python
 .PHONY: setup test run local check ingest index evaluate doctor smoke
 setup:
-	uv venv --python 3.12 .venv
-	uv pip install --python $(PYTHON) -r requirements-demo.lock
+	test -x $(PYTHON) || uv venv --python 3.12 .venv
+	uv pip install --python $(PYTHON) -r requirements-llm.txt -r requirements-dev.txt
 test:
 	$(PYTHON) -m pytest -q
 check: test
@@ -10,22 +11,22 @@ check: test
 run:
 	$(PYTHON) -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 local:
-	BACKEND_MODE=local $(PYTHON) -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+	BACKEND_MODE=local $(LOCAL_PYTHON) -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ingest:
-	$(PYTHON) -m app.ingest --download
+	$(LOCAL_PYTHON) -m app.ingest --download
 index:
-	$(PYTHON) -m app.search --index --download-model
+	$(LOCAL_PYTHON) -m app.search --index --download-model
 evaluate:
-	$(PYTHON) -m evaluation.run --include-drafts
+	$(LOCAL_PYTHON) -m evaluation.run --include-drafts
 doctor:
-	$(PYTHON) -m app.doctor
+	$(PYTHON) -m app.remote_check
 smoke:
-	$(PYTHON) -m app.doctor --smoke
+	$(PYTHON) -m app.remote_check --live
 .PHONY: model-status model-smoke
 model-status:
-	$(PYTHON) -m app.synthesis
+	$(LOCAL_PYTHON) -m app.synthesis
 model-smoke:
-	$(PYTHON) -m app.synthesis --live
+	$(LOCAL_PYTHON) -m app.synthesis --live
 OLLAMA_BIN := $(if $(wildcard data/models/ollama-runtime/ollama),data/models/ollama-runtime/ollama,ollama)
 .PHONY: model-serve model-pull compare
 model-serve:
@@ -33,4 +34,13 @@ model-serve:
 model-pull:
 	$(OLLAMA_BIN) pull qwen2.5:1.5b
 compare:
-	$(PYTHON) -m evaluation.compare --output evaluation/results/comparison-$$(date -u +%Y%m%dT%H%M%SZ)
+	$(LOCAL_PYTHON) -m evaluation.compare --output evaluation/results/comparison-$$(date -u +%Y%m%dT%H%M%SZ)
+
+.PHONY: setup-local local-doctor local-smoke
+setup-local:
+	test -x $(LOCAL_PYTHON) || uv venv --python 3.12 .venv-local
+	uv pip install --python $(LOCAL_PYTHON) -r requirements-demo.lock
+local-doctor:
+	$(LOCAL_PYTHON) -m app.doctor
+local-smoke:
+	$(LOCAL_PYTHON) -m app.doctor --smoke

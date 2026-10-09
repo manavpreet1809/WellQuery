@@ -1,85 +1,55 @@
 # WellQuery
 
-A third-year university project that explores general health information through document search, cited source excerpts, and inspectable evidence. Built by Manavpreet Singh on his earlier MediBot project.
+WellQuery enhances the supplied MediBot project while keeping its original architecture as the default: **FastAPI → Databricks classifier → Databricks retriever → Hugging Face Transformers → LLaMA**.
 
-**Current status:** the local application works with source excerpts and live-tested Ollama synthesis. The corpus contains 15 diabetes/kidney-health articles and 201 chunks. All 92 evaluation questions remain unverified drafts. The original/challenge/supplementary sets match their expected answer/refusal categories, but this does not establish answer correctness. See the [final report](docs/REPORT.md), [results](docs/results/), and [completion scope](docs/STATUS.md).
+The default model is `meta-llama/Llama-3.2-1B-Instruct`, running through the original CPU/float32 Transformers wrapper. The original system prompt is preserved. Databricks uses the original TF-IDF/logistic-regression classifier and TF-IDF/nearest-neighbor retriever, with Spark/Delta data processing and MLflow model registration. The original MedlinePlus/openFDA ingestion, training, and serving notebooks are included under [Databricks](Databricks/README.md).
 
-## Run the local demo
+## Run the original pipeline
 
-Requires Python 3.12, [uv](https://docs.astral.sh/uv/), and `make`. Run from the repository root:
+Requires Python 3.12, `uv`, accessible Databricks serving endpoints, and access to the configured Hugging Face model.
 
 ```sh
-make setup       # install pinned demo + test dependencies into .venv
-make ingest      # download catalogued articles, observing robots.txt
-make index       # explicitly download the pinned MiniLM model and embed documents
-make smoke       # check the store, index, local model, and cited-excerpt flow
-make evaluate    # generate clearly labeled DRAFT evaluation results
-make local       # start the local excerpt backend on 127.0.0.1:8000
+make setup
+# On first setup only: copy .env.example to .env, then fill in your values.
+make doctor     # checks configuration and installed dependencies; no remote calls
+make run        # http://127.0.0.1:8000
 ```
 
-Open [the chat](http://127.0.0.1:8000), [evaluation dashboard](http://127.0.0.1:8000/evaluation), or [API documentation](http://127.0.0.1:8000/docs). Try “What are the symptoms of type 2 diabetes?” and click a citation to inspect the source. `make local` selects the local backend without changing your `.env`.
+Set these values in your untracked `.env`:
 
-Initial setup needs internet access for dependencies, articles, and model weights. The default local excerpt path uses no paid API and sends no questions to a hosted inference service. Generated databases, model files, reviews, and run results stay out of Git. Fresh checkouts must generate their own results. The pinned dependency snapshot was tested on macOS Apple Silicon with Python 3.12; other platforms remain unverified. It is a version snapshot, not a security audit or a hash-locked distribution.
+```dotenv
+BACKEND_MODE=databricks
+DATABRICKS_HOST=https://your-workspace.example.com
+DATABRICKS_TOKEN=
+CLASSIFIER_ENDPOINT=medibot-classifier
+RETRIEVER_ENDPOINT=medibot-retriever
+MODEL_NAME=meta-llama/Llama-3.2-1B-Instruct
+HF_TOKEN=
+```
 
-## What it does
+Use your actual endpoint names. Obtain model access through Hugging Face if required; a cached authenticated login can also supply access. The first generation may download model weights. `make smoke` explicitly calls both configured endpoints and loads/generates with LLaMA. It can incur endpoint usage and requires network/model access.
 
-- Extracts curated HTML/text sources into section-aware chunks with publisher, URL, permission details, and content hashes.
-- Compares BM25 keyword search, MiniLM vector search, hybrid reciprocal rank fusion, and optional rule-based category routing.
-- Returns verbatim source excerpts by default, with numbered citations and expandable support passages.
-- Offers optional local Ollama synthesis with citation-ID and exact-support-quote checks.
-- Applies prototype phrase rules for emergency, personal-advice, and injection requests before local retrieval.
-- Compares retrieval configurations and exports answers for separate human review.
-- Displays evaluation runs with explicit draft/verified-question counts and limitations.
+The application can render its UI without credentials, but answers return a service-unavailable error until configured. It never silently falls back to Ollama, Qwen, SQLite retrieval, or scripted answers.
 
-![Draft evaluation dashboard](docs/images/evaluation.jpg)
+## Enhancements on the original foundation
 
-## Commands
+- Input length/range validation, whitespace handling, and candidate-count checks.
+- Validation of serving responses and refusal to generate without full source passages.
+- Original category routing and fallback to unfiltered retrieved passages.
+- Expandable retrieved evidence next to the LLaMA answer and request timing.
+- Sanitized service errors, lazy model loading, configuration diagnostics, and offline contract tests.
+- An evaluation dashboard for inspecting saved runs. Existing local experiment results are labeled separately and do not measure the restored Databricks/LLaMA system.
 
-| Command | Purpose |
-|---|---|
-| `make check` | Offline tests and whitespace validation |
-| `make doctor` | Check dependency and data/index prerequisites without loading the model |
-| `make smoke` | Exercise local excerpts and citations with the real cached embedding model |
-| `make local` | Run the local evidence-backed demo |
-| `make run` | Run the backend selected by `BACKEND_MODE` (defaults to scripted `demo`) |
-| `make evaluate` | Run the unverified development set; results are not headline accuracy |
-| `.venv/bin/python -m evaluation.run` | Run only human-verified questions; fails if none exist |
+Retrieved passages are inspectable evidence, **not verified sentence-level citations**. The original prompt asks for grounded general information and no personalized treatment; this is a student prototype, not medical advice.
 
-After changing source documents, rerun ingestion and index creation. Vector search detects stale content. For explicit refresh use `.venv/bin/python -m app.ingest --download --refresh`.
+## Verification status
 
-## Optional model synthesis and original MediBot mode
+The original architecture is restored in code. Offline tests exercise endpoint payloads, routing, evidence handling, and the Transformers wrapper with substitutes. Live Databricks/LLaMA inference has **not** been verified in this workspace: endpoint credentials are absent. Neither original model accuracy nor deployment success is claimed.
 
-To enable synthesis, run Ollama locally with a model you have separately installed and set `OLLAMA_MODEL` in `.env`. Start `make local`, select **AI synthesis**, and inspect its support quotes. This mode calls the local [Ollama chat API](https://docs.ollama.com/api/chat). Without the model/service it reports unavailability; it does not silently substitute generated-looking excerpts. Run `make model-status` to inspect installed-model metadata without generating text, then `make model-smoke` for a fixed-question live synthesis probe. Both return a nonzero exit code when unavailable or unsuccessful. Metadata readiness alone does not demonstrate valid generation. The metadata check uses the [Ollama model listing API](https://docs.ollama.com/api/tags). Live generation and browser evidence inspection passed with Qwen2.5 1.5B on October 7, 2026. This is a mechanical integration check, not a medical-quality review.
+Run `make check` for offline tests and whitespace checks. Read [setup and architecture](docs/ARCHITECTURE.md), [status](docs/STATUS.md), and [provenance](ATTRIBUTION.md).
 
-The original `BACKEND_MODE=databricks` flow is retained for comparison and requires your serving endpoints and the original local generation dependencies in `requirements-llm.txt`. Those legacy pins should be tested in a **separate environment**, not mixed into the tested demo snapshot. Databricks inference remains unverified; the new local safeguards are not applied to the legacy flow. See `.env.example` and [provenance](ATTRIBUTION.md).
+## Optional local experiments
 
-## Evidence, evaluation, and limits
+Earlier SQLite/BM25/MiniLM and Ollama work is retained as an explicitly selected experiment, not the product's default foundation. Run `make setup-local` to install `requirements-demo.lock` in a separate `.venv-local` environment; then use `make ingest`, `make index`, `make local-smoke`, and `make local`. These experiments have their own corpus and draft evaluation results. Do not use those results as evidence of Databricks or LLaMA performance.
 
-Citation validation checks that source IDs exist and quotes match retrieved passages. It does **not** prove that a synthesized claim follows from that quote. Retrieval relevance, answer support, and clinical safety are distinct.
-
-The 15-article collection covers diabetes, kidney health, and two medication-information pages; it is not a comprehensive health or drug reference. Local routing is a simple rule baseline; the trained MediBot classifier remains remote. Draft results exposed worse retrieval with routing on one split, so no routing improvement is claimed. Phrase safeguards can miss paraphrases or misread negation, and vector scores are not medical confidence. The app is intended for a local classroom demo, not public clinical use. Avoid entering personal health information; there is no comprehensive PII filter.
-
-- [Evaluation definitions and human review workflow](evaluation/README.md)
-- [Source permissions and ingestion limitations](data/README.md)
-- [Architecture and design tradeoffs](docs/ARCHITECTURE.md)
-- [Two-minute demo and troubleshooting](docs/DEMO.md)
-- [Completion checklist](docs/STATUS.md)
-- [Original scope](PROJECT_SCOPE.md) and [commit history notes](docs/PROGRESS.md)
-
-The final submission still needs human question/answer review, live synthesis validation if synthesis is presented as a working feature.
-
-
-### Run local synthesis
-
-Install [Ollama from its official source](https://docs.ollama.com/macos). On this development machine, a verified runtime is already in ignored `data/models/ollama-runtime/`; `make model-serve` detects it. Other installations use `ollama` from PATH.
-
-1. In a terminal, run `make model-serve` (leave it running).
-2. In another terminal, run `make model-pull` once to download [Qwen2.5 1.5B](https://ollama.com/library/qwen2.5:1.5b), approximately 986 MB.
-3. Set `OLLAMA_MODEL=qwen2.5:1.5b` in your local `.env` (already set on this machine).
-4. Run `make model-smoke`, then `make local`, and choose **AI synthesis**.
-
-`make model-serve` stores models under ignored `data/models/ollama`. If another Ollama server already owns port 11434, use that server or stop it before starting this one; do not run two servers on the same port. Stop local servers with Ctrl+C after your demo. Model downloads and runtime binaries are not committed.
-
-For the controlled MediBot-prompt comparison, use `make compare`. This compares prompt handling with the same local model, not the original remote deployment. Read [the comparison methodology](docs/REPORT.md#controlled-medibot-prompt-comparison) before interpreting the outputs.
-
-![Live local synthesis with source evidence](docs/images/live-synthesis.png)
+`BACKEND_MODE=demo make run` starts the scripted UI-only demonstration. `make evaluate`, `make compare`, and the saved [historical report](docs/REPORT.md) concern the local experiment, not a live comparison against the original deployment.

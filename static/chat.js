@@ -27,7 +27,7 @@ function renderAnswer(data) {
   const section = element('article', undefined, 'answer');
   section.append(element('h2', 'WellQuery'));
   const style = data.answer_style === 'excerpts' ? 'Source excerpts — not AI synthesis'
-    : data.answer_style === 'ollama' ? 'AI synthesis — inspect supporting quotes' : data.mode;
+    : data.answer_style === 'ollama' ? 'AI synthesis — inspect supporting quotes' : data.answer_style === 'transformers' ? 'LLaMA answer · Databricks evidence' : data.mode;
   section.append(element('p', style, 'answer-label'));
   if (data.refused) section.append(element('p', 'Response limited: ' + (data.refusal_reason || 'unsupported request'), 'notice'));
   const evidence = new Map((data.citations || []).map(c => [c.n, c]));
@@ -76,7 +76,7 @@ form.addEventListener('submit', async (event) => {
   try {
     const response = await fetch('/ask', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({question, answer_style: document.querySelector('#answer-style')?.value || 'excerpts'}),
+      body: JSON.stringify({question, answer_style: document.querySelector('#answer-style')?.value || undefined}),
       signal: controller.signal
     });
     if (!response.ok) {

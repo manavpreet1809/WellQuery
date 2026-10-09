@@ -1,5 +1,6 @@
 """Shared MediBot classification/retrieval orchestration."""
 from typing import Any
+from time import perf_counter
 
 NO_EVIDENCE = "I could not find enough information in the available documents to answer that."
 
@@ -19,6 +20,7 @@ def filter_chunks_by_route(chunks: list[dict], route: str) -> list[dict]:
 def answer_question(question: str, client: Any, generate: Any, *, threshold: float = 0.8,
                     top_k: int = 5, pool_k: int = 50, max_dist: float = 0.85) -> dict:
     """Use one pipeline for the API and tests; never generate with empty evidence."""
+    started = perf_counter()
     classified = _first_prediction(client.classify(question, threshold))
     route = classified.get("route", "all")
     if route not in {"drug", "condition", "all"}:
@@ -35,5 +37,15 @@ def answer_question(question: str, client: Any, generate: Any, *, threshold: flo
     answer = generate(question, chunks) if chunks else NO_EVIDENCE
     if not isinstance(answer, str) or not answer.strip():
         raise ValueError("Empty generated answer")
+    # Evidence is shown separately: these are retrieved passages, not verified
+    # sentence-level citations for the free-text answer produced by the original prompt.
+    citations = [dict(n=i, title=c.get("title") or "Retrieved passage",
+                      publisher=c.get("source") or "Databricks corpus",
+                      section_path=c.get("category") or "", url=c.get("url") or "",
+                      text=c["chunk_text"], licence="", chunk_id=c.get("chunk_id"))
+                 for i, c in enumerate(chunks, 1)]
     return dict(question=question, route=route, confidence=confidence, answer=answer,
-                chunks_used=len(chunks), chunks=chunks, refused=not chunks)
+                chunks_used=len(chunks), chunks=chunks, refused=not chunks,
+                citations=citations, answer_style="transformers",
+                refusal_reason="insufficient_evidence" if not chunks else None,
+                latency_ms=round((perf_counter() - started) * 1000, 2))

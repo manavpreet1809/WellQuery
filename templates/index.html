@@ -3,7 +3,7 @@
 <title>WellQuery</title><link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}"></head>
 <body><main><nav><a href="/evaluation">Evaluation results</a></nav><h1>WellQuery</h1><p>Explore information. Check the evidence.</p>
 <p class="notice">Student prototype. General information only; not medical advice. Do not enter personal health details. For an emergency, contact local emergency services.</p>
-<p id="mode">Mode: {{ mode }}.{% if mode == 'demo' %} Scripted demo — try “What is WellQuery?”. No health information or AI generation is active.{% elif mode == 'local' %} Local evidence answers. Excerpts are direct source text; optional AI synthesis requires Ollama.{% else %} Requires configured Databricks endpoints and a local model.{% endif %}</p>
+<p id="mode">Mode: {{ mode }}.{% if mode == 'demo' %} Scripted demo — try “What is WellQuery?”. No health information or AI generation is active.{% elif mode == 'local' %} Local evidence answers. Excerpts are direct source text; optional AI synthesis requires Ollama.{% else %} Original MediBot pipeline: Databricks classifier and retriever → Transformers LLaMA. Requires endpoint configuration and model access.{% endif %}</p>
 <section id="messages" role="log" aria-live="polite" aria-label="Conversation"></section>
 <form id="question-form"><label for="question">Your question</label><textarea id="question" maxlength="1000" required rows="3"></textarea>
 {% if mode == 'local' %}<label for="answer-style">Answer style</label><select id="answer-style"><option value="excerpts">Source excerpts (no generation)</option><option value="ollama">AI synthesis (requires local Ollama)</option></select>{% endif %}

@@ -1,4 +1,4 @@
-# Optional: original MediBot local generation backend; requires model access.
+# Default original MediBot generation backend; requires access to the model.
 -r requirements.txt
 transformers==4.47.1
 torch==2.7.1

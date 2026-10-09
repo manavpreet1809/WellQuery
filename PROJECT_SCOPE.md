@@ -1,3 +1,5 @@
+> Historical local-experiment document. The current default is the restored Databricks/Transformers LLaMA architecture; see [current status](docs/STATUS.md) and the root README. Results below do not validate that default pipeline.
+
 # WellQuery project scope
 
 ## Goal

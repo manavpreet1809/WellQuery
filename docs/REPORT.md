@@ -1,3 +1,5 @@
+> Historical local-experiment document. The current default is the restored Databricks/Transformers LLaMA architecture; see [current status](STATUS.md) and the root README. Results below do not validate that default pipeline.
+
 # WellQuery: extending MediBot with inspectable local retrieval
 
 **Author:** Manavpreet Singh · **Release evidence:** October 7, 2026

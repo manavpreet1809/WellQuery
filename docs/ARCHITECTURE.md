@@ -1,42 +1,26 @@
 # WellQuery architecture
 
-```mermaid
-flowchart TD
-    A[Curated source catalogue] --> B[Robots-aware download and cache]
-    B --> C[HTML or text extraction and section chunks]
-    C --> D[(SQLite documents and chunks)]
-    D --> E[BM25 keyword ranking]
-    D --> F[Pinned MiniLM embeddings and cosine ranking]
-    E --> G[Reciprocal rank fusion]
-    F --> G
-    Q[User question] --> S[Prototype phrase safeguards]
-    S --> R[Optional rule routing]
-    R --> G
-    G --> H[Evidence selection]
-    H --> I[Verbatim excerpts or optional Ollama synthesis]
-    I --> J[Citation and exact quote checks]
-    J --> K[Answer and expandable evidence]
-    D --> V[Evaluation runner]
-    V --> W[Draft or reviewed-question summaries]
-    W --> X[Read-only results dashboard]
+## Default product: original MediBot foundation
+
+```text
+Browser → FastAPI /ask
+              → Databricks classifier (TF-IDF + logistic regression)
+              → Databricks retriever (TF-IDF + nearest neighbors)
+              → category filter, original fallback
+              → original prompt + Transformers LLaMA-3.2-1B-Instruct
+              → answer and inspectable retrieved passages
 ```
 
-## Decisions and tradeoffs
+Databricks notebooks ingest MedlinePlus/openFDA, clean and chunk documents into Delta tables, train both models, register MLflow artifacts, and package serving models. Their original code is in `Databricks/`; workspace setup is documented there.
 
-- **SQLite and exact vector scans:** sufficient for 201 chunks and easy to run locally. This trades large-scale performance for a smaller student-project setup. The original PostgreSQL/Azure plan was intentionally reduced.
-- **BM25 + MiniLM + RRF:** distinct methods make a comparison experiment possible. RRF combines ranks rather than incompatible raw score scales. Exact cosine search avoids a separate vector service.
-- **Pinned embedding revision and corpus fingerprint:** document changes invalidate the persisted vector snapshot. The model is explicitly downloaded during index setup; ordinary searches use local files.
-- **Rule routing:** a transparent local comparison baseline. Drug/condition/mixed cues are not a trained classifier or an out-of-scope detector. No trained local MediBot classifier artifacts were supplied.
-- **Excerpts by default:** supports a working demo without another model service. Source wording and citations can be inspected directly, though passage selection can still be irrelevant or incomplete.
-- **Optional synthesis:** local Ollama receives the question and evidence. JSON claims select immutable sentence IDs; the server maps them to source IDs and exact quotes. This validates provenance structure, not claim entailment. It must be evaluated independently before quality claims.
-- **Evaluation as data:** JSON/CSV artifacts keep metrics reproducible and inspectable. Review packets guard against accidentally applying decisions to changed questions. Reviewer identity is self-attributed, not authenticated.
+`app/config.py` defaults to `databricks`. `app/databricks_client.py` preserves the original endpoint payloads. `app/rag.py` adds response validation and evidence metadata around the original orchestration. `llm/llm.py` preserves the original CPU/float32 generation settings, tokenizer chat template, and model identifier; imports/model loading are lazy. `llm/prompt.py` is the original prompt.
 
-## Boundaries
+Input validation, sanitized errors, empty-evidence handling, tests, and evidence display enhance this pipeline without changing its classifier, retriever, or generator. An unavailable remote service fails visibly; there is no automatic local fallback. Retrieved passages are not proof of sentence-level entailment.
 
-The app does not persist chat questions or answers. The browser displays conversation content until reload. The evaluation runner persists its specified test questions and outputs locally, not user conversations. The dashboard exposes only aggregate local evaluation summaries, not the review-answer files.
+## Explicit experiments
 
-Do not infer Canadian residency guarantees: the local mode performs local inference, but installation and corpus downloads contact external providers. The original Databricks mode sends questions to configured remote services. There is no deployment, authentication, production privacy guarantee, or clinical validation in this demo.
+`BACKEND_MODE=local` uses the prior SQLite, BM25/MiniLM, optional Ollama experiment. `BACKEND_MODE=demo` is scripted. Neither is selected by the default product configuration. The local phrase guards, immutable evidence-ID synthesis, and draft evaluations belong to that separate experimental path and are not claimed as features of the original LLaMA generation path.
 
-## Original versus new work
+## Verification boundary
 
-The first import preserved MediBot's backend, local model wrapper, and UI with hashes recorded in `docs/medibot-baseline.json`. WellQuery adds local ingestion/storage, keyword/vector/hybrid search, rule routing, request/error handling, excerpts and evidence checks, the redesigned evidence interface, evaluation, and review/dashboard tooling. Git history and `ATTRIBUTION.md` record this evolution.
+Offline contract tests use fake endpoint responses and a fake Transformers model pipeline. They do not establish cloud availability, model access, model accuracy, or clinical quality. Use `make doctor` for configuration diagnostics and `make smoke` for an explicit live integration probe once credentials and model access are configured.
