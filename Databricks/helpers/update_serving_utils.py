@@ -12,7 +12,7 @@ CLASSIFIER_MODEL = "workspace.med.medibot_classifier"
 RETRIEVER_ENDPOINT = "medibot-retriever"
 CLASSIFIER_ENDPOINT = "medibot-classifier"
 
-client = MlflowClient()
+client = MlflowClient(registry_uri="databricks-uc") # models are registered in Unity Catalog
 
 def get_workspace_host_and_token():
     if dbutils is None:
@@ -129,6 +129,10 @@ def wait_endpoint_ready(endpoint_name: str, timeout_seconds: int = 900):
         ready_ok = (str(ready_val).upper() == "READY") or (ready_val is True)
         updating = str(config_update).upper() in {"IN_PROGRESS", "UPDATING"}
 
+        # a failed build never finishes; an old version may still report READY, so check this first
+        if str(config_update).upper() == "UPDATE_FAILED":
+            raise RuntimeError(f"Endpoint '{endpoint_name}' failed to deploy; see its build logs in Serving. state={state}")
+
         if ready_ok and not updating:
             print(f"Endpoint '{endpoint_name}' is READY.")
             return
@@ -138,6 +142,36 @@ def wait_endpoint_ready(endpoint_name: str, timeout_seconds: int = 900):
 
         print(f"Waiting... ready={ready_val}, config_update={config_update}")
         time.sleep(15)
+
+def create_endpoint_if_missing(endpoint_name: str, model_fqn: str, workload_size: str = "Small", scale_to_zero: bool = True):
+    host, token = get_workspace_host_and_token()
+    headers = {"Authorization": f"Bearer {token}"}
+
+    r = requests.get(f"{host}/api/2.0/serving-endpoints/{endpoint_name}", headers=headers, timeout=60) # check if it exists
+    if r.status_code == 200:
+        print(f"Endpoint '{endpoint_name}' already exists; run update_serving to change its model version.")
+        return
+    if r.status_code != 404:
+        r.raise_for_status()
+
+    latest = get_latest_uc_model_version(model_fqn) # serve the newest version
+    wait_model_version_ready(model_fqn, latest, timeout_seconds=300)
+
+    payload = {
+        "name": endpoint_name,
+        "config": {
+            "served_entities": [{
+                "entity_name": model_fqn,
+                "entity_version": str(latest),
+                "workload_size": workload_size, # smallest CPU size
+                "scale_to_zero_enabled": scale_to_zero, # stop billing compute while idle
+            }]
+        },
+    }
+    r = requests.post(f"{host}/api/2.0/serving-endpoints", headers=headers, json=payload, timeout=60)
+    r.raise_for_status()
+    print(f"Creating endpoint '{endpoint_name}' for {model_fqn} v{latest}")
+    wait_endpoint_ready(endpoint_name, timeout_seconds=1800) # first container build can take a while
 
 def update_endpoint_to_latest(endpoint_name: str, model_fqn: str):
     latest = get_latest_uc_model_version(model_fqn) # get newest version

@@ -122,7 +122,7 @@ def test_live_probe_uses_configured_retrieval_settings(monkeypatch):
     from app import remote_check, rag, databricks_client
     from llm import llm
     for name, value in {'DATABRICKS_HOST': 'https://example.com', 'DATABRICKS_TOKEN': 'fixture',
-                        'CLASSIFIER_ENDPOINT': 'c', 'RETRIEVER_ENDPOINT': 'r',
+                        'CLASSIFIER_ENDPOINT': 'c', 'RETRIEVER_ENDPOINT': 'r', 'HF_TOKEN': 'fixture',
                         'TOP_K': 3, 'POOL_K': 12, 'MAX_DIST': 0.7}.items():
         monkeypatch.setattr(settings, name, value)
     monkeypatch.setattr(remote_check.importlib.metadata, 'version', lambda _: 'fixture')
@@ -142,3 +142,26 @@ def test_invalid_configured_defaults_are_rejected():
         top_k: int = Field(default=0, ge=1, le=20)
     with pytest.raises(ValidationError):
         BadDefaults(question='What is diabetes?')
+
+
+def test_doctor_requires_huggingface_access_for_gated_llama(monkeypatch):
+    from app import remote_check
+    monkeypatch.setattr(settings, 'HF_TOKEN', None)
+    monkeypatch.setitem(sys.modules, 'huggingface_hub', SimpleNamespace(get_token=lambda: None))
+    check = next(c for c in remote_check.inspect()['checks'] if c['name'] == 'huggingface_access')
+    assert not check['ok'] and 'HF_TOKEN' in check['detail']
+    monkeypatch.setitem(sys.modules, 'huggingface_hub', SimpleNamespace(get_token=lambda: 'saved-login'))
+    check = next(c for c in remote_check.inspect()['checks'] if c['name'] == 'huggingface_access')
+    assert check['ok'] and 'saved-login' not in str(check)
+
+
+def test_live_failures_name_the_stage_without_secrets():
+    import requests
+    from app.remote_check import _explain_failure
+    response = requests.Response()
+    response.status_code = 404
+    response.url = 'https://private-host.example/serving-endpoints/medibot-retriever/invocations'
+    message = _explain_failure(requests.HTTPError(response=response))
+    assert 'medibot-retriever' in message and 'not found' in message and 'private-host' not in message
+    assert 'several minutes' in _explain_failure(requests.Timeout())
+    assert settings.MODEL_NAME in _explain_failure(OSError('gated repo'))

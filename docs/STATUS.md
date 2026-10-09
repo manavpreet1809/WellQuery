@@ -14,10 +14,12 @@ The prior SQLite/MiniLM/Ollama experiment remains opt-in. Its 15-document corpus
 
 ## Latest verification
 
-- 117 offline tests pass; whitespace checks pass.
+- 119 offline tests pass; whitespace checks pass.
 - Installed default runtime: Transformers 4.47.1, PyTorch 2.7.1, Accelerate 1.2.1; imports and dependency compatibility checked.
 - Original system prompt preserved; model loading serialized for concurrent first requests.
 - Default and optional experiment environments separated (`.venv` and `.venv-local`).
-- Live readiness probe stops before network/model calls because endpoint configuration is missing.
+- `make doctor` also checks Hugging Face access (token or saved login) for the gated LLaMA model. `make smoke` names the failing stage: endpoint not found, token rejected, endpoint starting, or model access.
+
+Stand-in integration check (not live inference): the deploy notebooks' own `RouterPyfunc` and `RetrieverPyfunc` code, trained on a ten-passage fixture, was served behind a local HTTPS server using the Databricks invocation URL and `{"predictions": [...]}` response shape. `make doctor`, `make smoke`, and a browser question passed through the real HTTP client, route filtering, evidence display, and the real Transformers pipeline on a tiny random-weight LLaMA-architecture model. This confirms the notebook serving contract matches the app. It does not verify a Databricks workspace, the trained models, Meta's LLaMA weights, or answer quality.
 
 To finish live verification, fill `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, `CLASSIFIER_ENDPOINT`, `RETRIEVER_ENDPOINT`, and model access (`HF_TOKEN` or authenticated Hugging Face login) in the untracked local configuration. Run `make smoke`, restart `make run`, and verify a supported question in the browser. A successful smoke test confirms integration only, not clinical accuracy.
